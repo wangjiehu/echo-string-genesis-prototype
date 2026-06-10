@@ -1,0 +1,67 @@
+{
+  "build": "1.0.0",
+  "browser": "chrome.exe",
+  "url": "http://127.0.0.1:4174/index.html",
+  "passed": true,
+  "scenarios": [
+    {
+      "name": "desktop-guided",
+      "url": "http://127.0.0.1:4174/index.html?mode=guided",
+      "viewport": {
+        "width": 1280,
+        "height": 900,
+        "mobile": false
+      },
+      "screenshot": "prototype/prototype_1_0_0_full.png",
+      "passed": true,
+      "inspection": {
+        "uxBuild": "1.0.0",
+        "mode": "guided",
+        "zone": "Z1",
+        "objectTokens": 2,
+        "actionButtons": 2,
+        "overflowX": 0,
+        "firstActionVisible": true,
+        "firstActionEnabled": true,
+        "firstObjectVisible": true,
+        "firstObjectEnabled": true,
+        "firstUsableStepVisible": true,
+        "resultPulseVisible": true,
+        "hasTitle": true,
+        "hasBuild": true,
+        "lowUnscannedLeaks": false
+      },
+      "failures": []
+    },
+    {
+      "name": "mobile-low",
+      "url": "http://127.0.0.1:4174/index.html?mode=low",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "mobile": true
+      },
+      "screenshot": "prototype/prototype_1_0_0_mobile.png",
+      "passed": true,
+      "inspection": {
+        "uxBuild": "1.0.0",
+        "mode": "low",
+        "zone": "Z1",
+        "objectTokens": 2,
+        "actionButtons": 6,
+        "overflowX": 0,
+        "firstActionVisible": true,
+        "firstActionEnabled": false,
+        "firstObjectVisible": true,
+        "firstObjectEnabled": true,
+        "firstUsableStepVisible": true,
+        "resultPulseVisible": true,
+        "hasTitle": true,
+        "hasBuild": true,
+        "lowUnscannedLeaks": false
+      },
+      "failures": []
+    }
+  ],
+  "failures": []
+}

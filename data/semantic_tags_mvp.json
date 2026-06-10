@@ -1,0 +1,313 @@
+{
+  "schemaVersion": "0.1",
+  "project": "Echo-String: Genesis",
+  "scope": "MVP_Duanju_Courtyard",
+  "designPrinciples": [
+    "同一槽位同一时间只保留一个主词缀",
+    "词缀效果必须能被玩家在1秒内看懂",
+    "MVP只开放结构、质量、温度、介质、力场五类可改写槽位",
+    "行为槽只用于敌人状态展示和AI调参，玩家暂不可改写"
+  ],
+  "tags": [
+    {
+      "tagId": "Semantic.Structure.Closed",
+      "displayName": "封闭",
+      "slotType": "Structure",
+      "mvpEditable": true,
+      "durationType": "PersistentUntilRewritten",
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Door", "Gate", "Chest", "ShieldedEnemy", "Mechanism"],
+      "incompatibleObjectTypes": ["Liquid", "LooseDebris"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "blocksTraversal": true,
+        "locksActivation": true,
+        "healthMultiplier": 1.0,
+        "damageTakenMultiplier": 1.0
+      },
+      "visual": {
+        "uiColor": "#B88CFF",
+        "iconHint": "lock",
+        "vfxId": "VFX_Semantic_Closed_Runes"
+      },
+      "failureText": {
+        "slotMissing": "目标没有结构槽，无法写入“封闭”。",
+        "objectIncompatible": "这个对象不能被封闭。",
+        "locked": "结构槽被上级规则锁定。"
+      },
+      "designNotes": "用于构成门、护盾和机关阻塞。MVP里主要作为障碍词缀，不鼓励玩家频繁主动使用。"
+    },
+    {
+      "tagId": "Semantic.Structure.Solid",
+      "displayName": "坚固",
+      "slotType": "Structure",
+      "mvpEditable": true,
+      "durationType": "PersistentUntilRewritten",
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Door", "Stone", "Enemy", "Boss", "Mechanism"],
+      "incompatibleObjectTypes": ["Liquid", "FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "healthMultiplier": 2.0,
+        "damageTakenMultiplier": 0.55,
+        "staggerResistanceMultiplier": 1.6,
+        "breakable": false
+      },
+      "visual": {
+        "uiColor": "#9AA5B1",
+        "iconHint": "shield",
+        "vfxId": "VFX_Semantic_Solid_EdgeGlow"
+      },
+      "failureText": {
+        "slotMissing": "目标没有结构槽，无法写入“坚固”。",
+        "objectIncompatible": "这个对象无法维持坚固结构。",
+        "locked": "结构槽被锁定，无法替换“坚固”。"
+      },
+      "designNotes": "让敌人变硬，也能保护机关。玩家需要学会剥离它，而不是只把它当增益。"
+    },
+    {
+      "tagId": "Semantic.Structure.Fragile",
+      "displayName": "脆弱",
+      "slotType": "Structure",
+      "mvpEditable": true,
+      "durationType": "PersistentUntilRewritten",
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Door", "Stone", "Enemy", "Boss", "Mechanism", "Debris"],
+      "incompatibleObjectTypes": ["Liquid", "FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "healthMultiplier": 0.35,
+        "damageTakenMultiplier": 1.8,
+        "staggerResistanceMultiplier": 0.55,
+        "breakable": true
+      },
+      "visual": {
+        "uiColor": "#F2D36B",
+        "iconHint": "crack",
+        "vfxId": "VFX_Semantic_Fragile_Cracks"
+      },
+      "failureText": {
+        "slotMissing": "目标没有结构槽，无法写入“脆弱”。",
+        "objectIncompatible": "这个对象没有可破坏结构。",
+        "locked": "结构槽被锁定，无法写入“脆弱”。"
+      },
+      "designNotes": "第一个教学词缀。必须保证玩家附近永远存在可重新获取来源。"
+    },
+    {
+      "tagId": "Semantic.Mass.Heavy",
+      "displayName": "沉重",
+      "slotType": "Mass",
+      "mvpEditable": true,
+      "durationType": "PersistentUntilRewritten",
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Stone", "Enemy", "Boss", "Platform", "Mechanism", "Debris"],
+      "incompatibleObjectTypes": ["FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "massMultiplier": 3.0,
+        "gravityScale": 1.35,
+        "knockbackTakenMultiplier": 0.45,
+        "movementSpeedMultiplier": 0.75,
+        "pressurePlateWeight": 3
+      },
+      "visual": {
+        "uiColor": "#6B5B4A",
+        "iconHint": "weight",
+        "vfxId": "VFX_Semantic_Heavy_DustRing"
+      },
+      "failureText": {
+        "slotMissing": "目标没有质量槽，无法写入“沉重”。",
+        "objectIncompatible": "这个对象没有可改写质量。",
+        "locked": "质量槽被锁定。"
+      },
+      "designNotes": "既是解谜工具，也是敌人风险词。沉重敌人更慢但冲撞更危险。"
+    },
+    {
+      "tagId": "Semantic.Mass.Light",
+      "displayName": "轻盈",
+      "slotType": "Mass",
+      "mvpEditable": true,
+      "durationType": "PersistentUntilRewritten",
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Stone", "Enemy", "Boss", "Platform", "Mechanism", "Debris"],
+      "incompatibleObjectTypes": ["FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "massMultiplier": 0.35,
+        "gravityScale": 0.55,
+        "knockbackTakenMultiplier": 1.7,
+        "movementSpeedMultiplier": 1.08,
+        "pressurePlateWeight": 0
+      },
+      "visual": {
+        "uiColor": "#9EE7FF",
+        "iconHint": "feather",
+        "vfxId": "VFX_Semantic_Light_InkFloat"
+      },
+      "failureText": {
+        "slotMissing": "目标没有质量槽，无法写入“轻盈”。",
+        "objectIncompatible": "这个对象无法变得轻盈。",
+        "locked": "质量槽被锁定。"
+      },
+      "designNotes": "用于移动巨石、制造临时平台，也能让敌人被击飞。"
+    },
+    {
+      "tagId": "Semantic.Temperature.Overheated",
+      "displayName": "过热",
+      "slotType": "Temperature",
+      "mvpEditable": true,
+      "durationType": "TimedOrPersistentBySource",
+      "defaultDurationSeconds": 12,
+      "extractCost": 1,
+      "injectCost": 3,
+      "compatibleObjectTypes": ["Enemy", "Boss", "Water", "Ice", "Door", "Mechanism", "FireSource"],
+      "incompatibleObjectTypes": [],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "damagePerSecond": 4,
+        "meltsIce": true,
+        "ignitesSteamReaction": true,
+        "movementSpeedMultiplier": 1.05
+      },
+      "visual": {
+        "uiColor": "#FF7043",
+        "iconHint": "flame",
+        "vfxId": "VFX_Semantic_Overheated_HeatWave"
+      },
+      "failureText": {
+        "slotMissing": "目标没有温度槽，无法写入“过热”。",
+        "objectIncompatible": "这个对象无法承载过热状态。",
+        "locked": "温度槽被锁定。",
+        "regionSuppressed": "区域规则压制了过热。"
+      },
+      "designNotes": "MVP核心元素反应词。注意不要让持续伤害替代动作战斗。"
+    },
+    {
+      "tagId": "Semantic.Temperature.Frozen",
+      "displayName": "冻结",
+      "slotType": "Temperature",
+      "mvpEditable": true,
+      "durationType": "TimedOrPersistentBySource",
+      "defaultDurationSeconds": 10,
+      "extractCost": 1,
+      "injectCost": 3,
+      "compatibleObjectTypes": ["Enemy", "Boss", "Water", "Mechanism", "Platform", "Door"],
+      "incompatibleObjectTypes": ["FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "movementSpeedMultiplier": 0.2,
+        "locksMinorMechanisms": true,
+        "createsTemporaryPlatformOnWater": true,
+        "incomingImpactMultiplier": 1.15
+      },
+      "visual": {
+        "uiColor": "#72C9FF",
+        "iconHint": "snowflake",
+        "vfxId": "VFX_Semantic_Frozen_IceGlyph"
+      },
+      "failureText": {
+        "slotMissing": "目标没有温度槽，无法写入“冻结”。",
+        "objectIncompatible": "这个对象无法被冻结。",
+        "locked": "温度槽被锁定。"
+      },
+      "designNotes": "承担控制、平台和破裂窗口三种用途。持续时间必须短，避免战斗被完全定住。"
+    },
+    {
+      "tagId": "Semantic.Medium.Wet",
+      "displayName": "潮湿",
+      "slotType": "Medium",
+      "mvpEditable": true,
+      "durationType": "TimedOrPersistentBySource",
+      "defaultDurationSeconds": 14,
+      "extractCost": 1,
+      "injectCost": 2,
+      "compatibleObjectTypes": ["Enemy", "Boss", "Stone", "Door", "Mechanism", "Water", "Debris"],
+      "incompatibleObjectTypes": ["FireSource"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "heatTransferMultiplier": 1.8,
+        "reducesOverheatedDurationMultiplier": 0.55,
+        "enablesSteamReaction": true,
+        "surfaceFrictionMultiplier": 0.85
+      },
+      "visual": {
+        "uiColor": "#3FA7D6",
+        "iconHint": "droplet",
+        "vfxId": "VFX_Semantic_Wet_WaterFilm"
+      },
+      "failureText": {
+        "slotMissing": "目标没有介质槽，无法写入“潮湿”。",
+        "objectIncompatible": "这个对象无法附着潮湿状态。",
+        "locked": "介质槽被锁定。"
+      },
+      "designNotes": "不是单独强词，而是反应桥梁。用于逼玩家理解组合逻辑。"
+    },
+    {
+      "tagId": "Semantic.Field.Attract",
+      "displayName": "吸引",
+      "slotType": "Field",
+      "mvpEditable": true,
+      "durationType": "Timed",
+      "defaultDurationSeconds": 8,
+      "extractCost": 1,
+      "injectCost": 3,
+      "compatibleObjectTypes": ["FieldPillar", "Enemy", "Boss", "Mechanism", "Debris", "Stone"],
+      "incompatibleObjectTypes": ["FireSource", "Water"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "forceType": "RadialPull",
+        "radiusMeters": 7,
+        "forceStrength": 650,
+        "affectsEnemies": true,
+        "affectsDebris": true
+      },
+      "visual": {
+        "uiColor": "#8A7CFF",
+        "iconHint": "magnet",
+        "vfxId": "VFX_Semantic_Attract_RingPull"
+      },
+      "failureText": {
+        "slotMissing": "目标没有力场槽，无法写入“吸引”。",
+        "objectIncompatible": "这个对象无法生成吸引力场。",
+        "locked": "力场槽被锁定。"
+      },
+      "designNotes": "主要用于聚怪和收拢碎片。必须设置反应冷却，避免和排斥无限震荡。"
+    },
+    {
+      "tagId": "Semantic.Field.Repel",
+      "displayName": "排斥",
+      "slotType": "Field",
+      "mvpEditable": true,
+      "durationType": "Timed",
+      "defaultDurationSeconds": 8,
+      "extractCost": 1,
+      "injectCost": 3,
+      "compatibleObjectTypes": ["FieldPillar", "Enemy", "Boss", "Mechanism", "Debris", "Stone"],
+      "incompatibleObjectTypes": ["FireSource", "Water"],
+      "replacesTagsInSameSlot": true,
+      "effects": {
+        "forceType": "RadialPush",
+        "radiusMeters": 5,
+        "forceStrength": 820,
+        "affectsEnemies": true,
+        "affectsDebris": true
+      },
+      "visual": {
+        "uiColor": "#47D18C",
+        "iconHint": "push",
+        "vfxId": "VFX_Semantic_Repel_Shockwave"
+      },
+      "failureText": {
+        "slotMissing": "目标没有力场槽，无法写入“排斥”。",
+        "objectIncompatible": "这个对象无法生成排斥力场。",
+        "locked": "力场槽被锁定。"
+      },
+      "designNotes": "用于推机关、开空间、群体击退。和吸引组成MVP最直观的力场组合。"
+    }
+  ]
+}

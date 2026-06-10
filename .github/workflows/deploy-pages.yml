@@ -1,0 +1,51 @@
+name: Deploy playable prototype
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "prototype/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate playable artifact
+        run: |
+          test -f prototype/index.html
+          test -f prototype/app.js
+          test -f prototype/regression.js
+          test -f prototype/styles.css
+          grep -q "app.js?v=1.0.0" prototype/index.html
+          grep -q "regression.js?v=1.0.0" prototype/index.html
+          grep -q "1.0.0 Public Playtest" prototype/index.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload playable artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: prototype
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

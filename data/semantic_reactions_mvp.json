@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "0.1",
+  "project": "Echo-String: Genesis",
+  "scope": "MVP_Duanju_Courtyard",
+  "reactionPolicy": {
+    "authoringMode": "DesignerAuthoredOnly",
+    "noCartesianCombination": true,
+    "globalReactionCooldownSeconds": 1.0,
+    "sameTargetReactionCooldownSeconds": 6.0,
+    "maxChainDepth": 1,
+    "debugLogRequired": true
+  },
+  "reactions": [
+    {
+      "reactionId": "Reaction.SteamBurst",
+      "displayName": "蒸汽爆发",
+      "requiredTags": [
+        "Semantic.Temperature.Overheated",
+        "Semantic.Medium.Wet"
+      ],
+      "triggerEvents": ["OnTagInjected", "OnHotTargetTouchesWetTarget", "OnWeaponImpact"],
+      "validTargetTypes": ["Enemy", "Boss", "Water", "Door", "Mechanism", "Stone"],
+      "effect": {
+        "damage": 12,
+        "damageType": "ThermalPressure",
+        "knockbackForce": 650,
+        "blindDurationSeconds": 2.5,
+        "createsCoverCloudSeconds": 4.0,
+        "removesTagsAfterTrigger": ["Semantic.Medium.Wet"],
+        "shortensTagDuration": {
+          "Semantic.Temperature.Overheated": 0.4
+        }
+      },
+      "vfxId": "VFX_Reaction_SteamBurst",
+      "sfxId": "SFX_Reaction_SteamBurst",
+      "playerReadableCause": "过热遇到潮湿，水汽瞬间膨胀。",
+      "designUse": "教学第一个组合反应，同时提供战斗遮蔽和击退。"
+    },
+    {
+      "reactionId": "Reaction.FractureWindow",
+      "displayName": "破裂窗口",
+      "requiredTags": [
+        "Semantic.Temperature.Frozen",
+        "Semantic.Structure.Fragile"
+      ],
+      "triggerEvents": ["OnTagInjected", "OnHeavyAttackImpact", "OnEnvironmentalImpact"],
+      "validTargetTypes": ["Enemy", "Boss", "Door", "Stone", "Mechanism"],
+      "effect": {
+        "statusDurationSeconds": 5.0,
+        "nextHeavyHitDamageMultiplier": 2.5,
+        "nextHeavyHitStaggerMultiplier": 2.0,
+        "breakThresholdBonus": 35,
+        "consumedOnHeavyHit": true
+      },
+      "vfxId": "VFX_Reaction_FractureWindow",
+      "sfxId": "SFX_Reaction_FractureWindow",
+      "playerReadableCause": "冻结让结构变脆，脆弱让裂纹扩散。",
+      "designUse": "把解谜破坏逻辑带入战斗，避免冻结成为纯控制。"
+    },
+    {
+      "reactionId": "Reaction.FieldPulse",
+      "displayName": "力场震荡",
+      "requiredTags": [
+        "Semantic.Field.Attract",
+        "Semantic.Field.Repel"
+      ],
+      "triggerEvents": ["OnFieldOverlap", "OnOppositeFieldInjectedIntoSameSlot", "OnTagInjected"],
+      "validTargetTypes": ["FieldPillar", "Enemy", "Boss", "Mechanism", "Debris", "Stone"],
+      "effect": {
+        "phaseOnePullSeconds": 0.75,
+        "phaseTwoPushSeconds": 0.35,
+        "pullForce": 700,
+        "pushForce": 1100,
+        "damage": 8,
+        "damageType": "Force",
+        "staggerMultiplier": 1.4,
+        "reactionCooldownSeconds": 8.0
+      },
+      "vfxId": "VFX_Reaction_FieldPulse",
+      "sfxId": "SFX_Reaction_FieldPulse",
+      "playerReadableCause": "吸引和排斥相互覆盖，力场先坍缩再弹开。",
+      "designUse": "用于群体控场、碎片移动和Boss第三层护文反制；同槽相反力场写入时也可触发，但必须防止连续触发。"
+    }
+  ]
+}

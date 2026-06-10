@@ -1,0 +1,37 @@
+{
+  "build": "1.0.0",
+  "browser": "chrome.exe",
+  "url": "http://127.0.0.1:4174/index.html",
+  "passed": true,
+  "reports": {
+    "guided": {
+      "mode": "guided",
+      "completed": true,
+      "currentZone": "Z7",
+      "scans": 19,
+      "extracts": 12,
+      "injects": 12,
+      "reactions": 4,
+      "mistakes": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "bossCounters": 3,
+      "experienceStatus": "clear"
+    },
+    "low": {
+      "mode": "low",
+      "completed": true,
+      "currentZone": "Z7",
+      "scans": 19,
+      "extracts": 12,
+      "injects": 12,
+      "reactions": 4,
+      "mistakes": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "bossCounters": 3,
+      "experienceStatus": "clear"
+    }
+  },
+  "failures": []
+}

@@ -1,0 +1,407 @@
+{
+  "project": "Echo-String: Genesis",
+  "prototype": "Duanju Courtyard",
+  "uxBuild": "1.0.0",
+  "uxBuildName": "Public Playtest",
+  "source": "Node VM regression suite with guided and low-guidance routes",
+  "generatedAt": "2026-06-10T13:56:21.279Z",
+  "passed": true,
+  "rollout": [
+    {
+      "version": "UX11",
+      "focus": "低引导自动回归"
+    },
+    {
+      "version": "UX12",
+      "focus": "卡点与软锁审计"
+    },
+    {
+      "version": "UX13",
+      "focus": "通关质量评分"
+    },
+    {
+      "version": "UX14",
+      "focus": "Boss反制路线账本"
+    },
+    {
+      "version": "UX15",
+      "focus": "检查点恢复"
+    },
+    {
+      "version": "UX16",
+      "focus": "回归套件入口"
+    },
+    {
+      "version": "UX17",
+      "focus": "报告结构增强"
+    },
+    {
+      "version": "UX18",
+      "focus": "完成面板复盘增强"
+    },
+    {
+      "version": "UX19",
+      "focus": "验证脚本加严"
+    },
+    {
+      "version": "UX20",
+      "focus": "生产文档收口"
+    },
+    {
+      "version": "UX21",
+      "focus": "真人试玩反馈硬化"
+    },
+    {
+      "version": "1.0.0",
+      "focus": "公开发布与圆润视觉系统"
+    }
+  ],
+  "comparison": {
+    "guidedMistakes": 0,
+    "lowMistakes": 0,
+    "guidedScore": 100,
+    "lowScore": 100
+  },
+  "failureAudit": {
+    "build": "1.0.0",
+    "passed": true,
+    "checks": [
+      {
+        "label": "剥离目标不提供的词",
+        "category": "tag-unavailable",
+        "passed": true
+      },
+      {
+        "label": "词库满时继续剥离",
+        "category": "inventory-full",
+        "passed": true
+      },
+      {
+        "label": "向无槽机关写入结构词",
+        "category": "slot-missing",
+        "passed": true
+      },
+      {
+        "label": "向锁定火盆写入温度词",
+        "category": "slot-locked",
+        "passed": true
+      },
+      {
+        "label": "原墨不足时剥离",
+        "category": "ink-low",
+        "passed": true
+      }
+    ],
+    "failureCounts": {
+      "tag-unavailable": 1,
+      "inventory-full": 1,
+      "slot-missing": 1,
+      "slot-locked": 1,
+      "ink-low": 1
+    },
+    "failureEvents": [
+      {
+        "label": "剥离目标不提供的词",
+        "message": "裂纹石像 当前没有可剥离的“沉重”。",
+        "type": "bad",
+        "category": "tag-unavailable",
+        "t": 0,
+        "zone": "Z1",
+        "mode": "debug",
+        "selectedObjectId": "statue",
+        "selectedTagId": "Semantic.Mass.Heavy",
+        "selectedInventoryTag": null,
+        "ink": 12,
+        "inventoryCount": 0
+      },
+      {
+        "label": "词库满时继续剥离",
+        "message": "临时词库已满，最多携带3个词缀。",
+        "type": "bad",
+        "category": "inventory-full",
+        "t": 0,
+        "zone": "Z1",
+        "mode": "debug",
+        "selectedObjectId": "statue",
+        "selectedTagId": "Semantic.Structure.Fragile",
+        "selectedInventoryTag": null,
+        "ink": 12,
+        "inventoryCount": 3
+      },
+      {
+        "label": "向无槽机关写入结构词",
+        "message": "地面机关 没有结构槽，无法写入“脆弱”。",
+        "type": "bad",
+        "category": "slot-missing",
+        "t": 0,
+        "zone": "Z2",
+        "mode": "debug",
+        "selectedObjectId": "plate",
+        "selectedTagId": null,
+        "selectedInventoryTag": "Semantic.Structure.Fragile",
+        "ink": 12,
+        "inventoryCount": 1
+      },
+      {
+        "label": "向锁定火盆写入温度词",
+        "message": "火盆 的温度槽被锁定。",
+        "type": "bad",
+        "category": "slot-locked",
+        "t": 0,
+        "zone": "Z4",
+        "mode": "debug",
+        "selectedObjectId": "brazier",
+        "selectedTagId": null,
+        "selectedInventoryTag": "Semantic.Temperature.Overheated",
+        "ink": 12,
+        "inventoryCount": 1
+      },
+      {
+        "label": "原墨不足时剥离",
+        "message": "原墨不足，无法剥离。",
+        "type": "bad",
+        "category": "ink-low",
+        "t": 0,
+        "zone": "Z1",
+        "mode": "debug",
+        "selectedObjectId": "statue",
+        "selectedTagId": "Semantic.Structure.Fragile",
+        "selectedInventoryTag": null,
+        "ink": 0,
+        "inventoryCount": 0
+      }
+    ]
+  },
+  "playerPathAudit": {
+    "build": "1.0.0",
+    "passed": true,
+    "checks": [
+      {
+        "label": "non-persistent source cannot be extracted after visible tag is gone",
+        "passed": true
+      },
+      {
+        "label": "Z5 field pillar extraction is blocked on mechanic route",
+        "passed": true
+      },
+      {
+        "label": "Boss core exposure keeps positive HP before final fragile strike",
+        "passed": true
+      },
+      {
+        "label": "Boss can be finished after second visible fragile extraction",
+        "passed": true
+      }
+    ]
+  },
+  "domClickRegression": {
+    "build": "1.0.0",
+    "browser": "chrome.exe",
+    "url": "http://127.0.0.1:4174/index.html",
+    "passed": true,
+    "reports": {
+      "guided": {
+        "mode": "guided",
+        "completed": true,
+        "currentZone": "Z7",
+        "scans": 19,
+        "extracts": 12,
+        "injects": 12,
+        "reactions": 4,
+        "mistakes": 0,
+        "feedbackEvents": 40,
+        "failureEvents": 0,
+        "bossCounters": 3,
+        "experienceStatus": "clear"
+      },
+      "low": {
+        "mode": "low",
+        "completed": true,
+        "currentZone": "Z7",
+        "scans": 19,
+        "extracts": 12,
+        "injects": 12,
+        "reactions": 4,
+        "mistakes": 0,
+        "feedbackEvents": 40,
+        "failureEvents": 0,
+        "bossCounters": 3,
+        "experienceStatus": "clear"
+      }
+    },
+    "failures": []
+  },
+  "visualSmoke": {
+    "build": "1.0.0",
+    "browser": "chrome.exe",
+    "url": "http://127.0.0.1:4174/index.html",
+    "passed": true,
+    "scenarios": [
+      {
+        "name": "desktop-guided",
+        "url": "http://127.0.0.1:4174/index.html?mode=guided",
+        "viewport": {
+          "width": 1280,
+          "height": 900,
+          "mobile": false
+        },
+        "screenshot": "prototype/prototype_1_0_0_full.png",
+        "passed": true,
+        "inspection": {
+          "uxBuild": "1.0.0",
+          "mode": "guided",
+          "zone": "Z1",
+          "objectTokens": 2,
+          "actionButtons": 2,
+          "overflowX": 0,
+          "firstActionVisible": true,
+          "firstActionEnabled": true,
+          "firstObjectVisible": true,
+          "firstObjectEnabled": true,
+          "firstUsableStepVisible": true,
+          "resultPulseVisible": true,
+          "hasTitle": true,
+          "hasBuild": true,
+          "lowUnscannedLeaks": false
+        },
+        "failures": []
+      },
+      {
+        "name": "mobile-low",
+        "url": "http://127.0.0.1:4174/index.html?mode=low",
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "mobile": true
+        },
+        "screenshot": "prototype/prototype_1_0_0_mobile.png",
+        "passed": true,
+        "inspection": {
+          "uxBuild": "1.0.0",
+          "mode": "low",
+          "zone": "Z1",
+          "objectTokens": 2,
+          "actionButtons": 6,
+          "overflowX": 0,
+          "firstActionVisible": true,
+          "firstActionEnabled": false,
+          "firstObjectVisible": true,
+          "firstObjectEnabled": true,
+          "firstUsableStepVisible": true,
+          "resultPulseVisible": true,
+          "hasTitle": true,
+          "hasBuild": true,
+          "lowUnscannedLeaks": false
+        },
+        "failures": []
+      }
+    ],
+    "failures": []
+  },
+  "validationCoverage": [
+    "JSON解析与标签引用",
+    "app/data一致性",
+    "UI DOM合约",
+    "双模式回归套件",
+    "失败审计",
+    "HTTP健康检查",
+    "玩家反馈事件与体验审计",
+    "真实可见路径审计",
+    "真实DOM点击回归",
+    "桌面/手机视觉Smoke"
+  ],
+  "reports": {
+    "guided": {
+      "completed": true,
+      "mode": "guided",
+      "score": 100,
+      "grade": "S",
+      "scans": 19,
+      "extracts": 12,
+      "injects": 12,
+      "routeAssertions": 6,
+      "mistakes": 0,
+      "bossPhaseCounters": 3,
+      "reactions": 4,
+      "checkpointSaves": 7,
+      "checkpointRestores": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "experienceStatus": "clear",
+      "experienceHeadline": "路径稳定，适合真人低引导复测",
+      "experienceStrengths": [
+        "首扫 0:00，玩家能进入扫描闭环。",
+        "组合反应覆盖完整。",
+        "Boss三层护文都被不同反制击破。",
+        "操作反馈事件充足，可复盘关键路径。"
+      ],
+      "experienceFrictions": [],
+      "failureLedger": []
+    },
+    "low": {
+      "completed": true,
+      "mode": "low",
+      "score": 100,
+      "grade": "S",
+      "scans": 19,
+      "extracts": 12,
+      "injects": 12,
+      "routeAssertions": 6,
+      "mistakes": 0,
+      "bossPhaseCounters": 3,
+      "reactions": 4,
+      "checkpointSaves": 7,
+      "checkpointRestores": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "experienceStatus": "clear",
+      "experienceHeadline": "路径稳定，适合真人低引导复测",
+      "experienceStrengths": [
+        "首扫 0:00，玩家能进入扫描闭环。",
+        "组合反应覆盖完整。",
+        "Boss三层护文都被不同反制击破。",
+        "操作反馈事件充足，可复盘关键路径。"
+      ],
+      "experienceFrictions": [],
+      "failureLedger": []
+    }
+  },
+  "suiteSummary": {
+    "build": "1.0.0",
+    "passed": true,
+    "comparison": {
+      "guidedMistakes": 0,
+      "lowMistakes": 0,
+      "guidedScore": 100,
+      "lowScore": 100
+    },
+    "guided": {
+      "completed": true,
+      "mode": "guided",
+      "score": 100,
+      "grade": "S",
+      "assertions": 6,
+      "mistakes": 0,
+      "bossCounters": 3,
+      "reactions": 4,
+      "checkpointRestores": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "experienceStatus": "clear"
+    },
+    "low": {
+      "completed": true,
+      "mode": "low",
+      "score": 100,
+      "grade": "S",
+      "assertions": 6,
+      "mistakes": 0,
+      "bossCounters": 3,
+      "reactions": 4,
+      "checkpointRestores": 0,
+      "feedbackEvents": 40,
+      "failureEvents": 0,
+      "experienceStatus": "clear"
+    }
+  }
+}
