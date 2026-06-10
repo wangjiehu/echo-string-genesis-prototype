@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="《语弦生态：创世纪》断句庭院可玩灰盒原型，打开网页即可试玩扫描、剥离、注入和组合反应闭环。" />
+    <meta name="theme-color" content="#f3f0ea" />
+    <meta property="og:title" content="断句庭院灰盒原型" />
+    <meta property="og:description" content="Echo-String: Genesis 的网页可玩MVP原型。" />
+    <meta property="og:type" content="website" />
+    <title>语弦生态：断句庭院灰盒原型</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="title-block">
+          <p class="eyebrow">Echo-String: Genesis / MVP Prototype</p>
+          <h1>断句庭院灰盒原型</h1>
+          <span class="build-pill">1.0.0 Public Playtest</span>
+        </div>
+        <div class="topbar-controls">
+          <div class="mode-switch" aria-label="测试模式">
+            <button class="mode-button active" type="button" data-mode="guided" data-testid="mode-guided" aria-pressed="true">引导</button>
+            <button class="mode-button" type="button" data-mode="low" data-testid="mode-low" aria-pressed="false">低引导</button>
+            <button class="mode-button" type="button" data-mode="debug" data-testid="mode-debug" aria-pressed="false">调试</button>
+          </div>
+          <div class="status-strip" aria-label="玩家状态">
+            <div class="status-card ink-card">
+              <span>原墨</span>
+              <strong id="inkValue">12</strong>
+              <i class="status-meter"><b></b></i>
+            </div>
+            <div class="status-card inventory-card">
+              <span>词库</span>
+              <strong id="inventoryCount">0/3</strong>
+              <i class="status-meter"><b></b></i>
+            </div>
+            <div class="status-card zone-card">
+              <span>区域</span>
+              <strong id="zoneIndex">Z1</strong>
+              <i class="status-meter"><b></b></i>
+            </div>
+            <div class="status-card time-card">
+              <span>用时</span>
+              <strong id="elapsedValue">0:00</strong>
+              <i class="status-meter"><b></b></i>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section class="session-panel" aria-label="试玩会话状态">
+        <div id="sessionStatus" class="session-status"></div>
+        <div class="session-actions">
+          <button id="shareLinkBtn" class="quiet-button" type="button">分享</button>
+          <button id="undoBtn" class="quiet-button" type="button">撤销</button>
+          <button id="checkpointBtn" class="quiet-button" type="button">检查点</button>
+          <button id="restartSessionBtn" class="quiet-button" type="button">重开本轮</button>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel zone-panel">
+          <div class="panel-heading">
+            <span class="label">流程</span>
+            <button id="resetBtn" class="quiet-button" type="button">重置</button>
+          </div>
+          <div id="zoneList" class="zone-list"></div>
+        </aside>
+
+        <section class="stage-panel">
+          <div class="stage-header">
+            <div>
+              <p class="label">当前目标</p>
+              <h2 id="zoneTitle"></h2>
+            </div>
+            <p id="zoneObjective" class="objective"></p>
+          </div>
+          <div class="guidance-strip">
+            <span class="label">下一步</span>
+            <strong id="nextHint">选择场景中的对象。</strong>
+          </div>
+          <div id="resultPulse" class="result-pulse" aria-live="polite"></div>
+          <div id="decisionStrip" class="decision-strip" aria-label="当前决策摘要"></div>
+          <div id="stepList" class="step-list" aria-label="区域步骤"></div>
+          <div id="contextActions" class="context-actions"></div>
+          <div id="sceneMap" class="scene-map" aria-label="场景对象"></div>
+          <div id="actionHelp" class="action-help"></div>
+        </section>
+
+        <aside class="panel inspector-panel">
+          <div class="panel-heading">
+            <span class="label">扫描器</span>
+            <span id="selectedHint" class="hint">未选择对象</span>
+          </div>
+          <div id="inspector" class="inspector-empty">
+            选择场景中的对象，然后扫描。
+          </div>
+          <div class="inventory">
+            <div class="panel-heading">
+              <span class="label">临时词库</span>
+              <button id="clearInventoryBtn" class="quiet-button" type="button">清空</button>
+            </div>
+            <div id="inventoryList" class="inventory-list"></div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="bottom-panel">
+        <div class="log-panel">
+          <p class="label">事件日志</p>
+          <div id="eventLog" class="event-log"></div>
+        </div>
+        <div class="reflection-panel">
+          <p class="label">反思提示</p>
+          <div id="reflectionBox" class="reflection-box"></div>
+        </div>
+        <div class="metrics-panel">
+          <div class="panel-heading">
+            <span class="label">试玩指标</span>
+            <div class="tool-row">
+              <button id="refillInkBtn" class="quiet-button" type="button">补墨</button>
+              <button id="resetZoneBtn" class="quiet-button" type="button">重置区</button>
+              <button id="downloadReportBtn" class="quiet-button" type="button">报告</button>
+            </div>
+          </div>
+          <div id="metricsBox" class="metrics-box"></div>
+        </div>
+      </section>
+
+      <section id="completionPanel" class="completion-panel" aria-label="通关总结"></section>
+    </main>
+
+    <script id="reportData" type="application/json"></script>
+    <script src="./app.js?v=1.0.0" defer></script>
+    <script src="./regression.js?v=1.0.0" defer></script>
+  </body>
+</html>
