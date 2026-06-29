@@ -11,6 +11,400 @@ const TAGS = {
   "Semantic.Field.Repel": { name: "排斥", slot: "Field", color: "#47D18C", extract: 1, inject: 3, compatible: ["FieldPillar", "Enemy", "Boss", "Mechanism", "Debris", "Stone"] }
 };
 
+/* ==========================================================================
+   Echo Audio Engine (Web Audio API Synthesizer)
+   ========================================================================== */
+class EchoAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.bgmGain = null;
+    this.masterGain = null;
+    this.sfxVolume = 0.7;
+    this.bgmVolume = 0.4;
+    this.initialized = false;
+    this.isMuted = false;
+    this.bgmTimeout = null;
+  }
+
+  init() {
+    if (this.initialized) return;
+    if (typeof window === "undefined" || typeof document === "undefined" || window.navigator?.webdriver || document.body?.dataset?.domClickMode || window.__echoRuntimeIsTesting) {
+      this.isMuted = true;
+      this.initialized = true;
+      return;
+    }
+    try {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) {
+        this.isMuted = true;
+        this.initialized = true;
+        return;
+      }
+      this.ctx = new AudioCtx();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.connect(this.ctx.destination);
+      this.masterGain.gain.setValueAtTime(1.0, this.ctx.currentTime);
+      this.initialized = true;
+      this.startBgm();
+    } catch (e) {
+      this.isMuted = true;
+      this.initialized = true;
+      console.warn("Web Audio Context initialization failed:", e);
+    }
+  }
+
+  setSfxVolume(vol) {
+    this.sfxVolume = vol;
+  }
+
+  setBgmVolume(vol) {
+    this.bgmVolume = vol;
+    if (this.bgmGain && this.ctx) {
+      this.bgmGain.gain.setValueAtTime(vol * 0.15, this.ctx.currentTime);
+    }
+  }
+
+  playSfx(type) {
+    if (!this.initialized || this.isMuted || !this.ctx) return;
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
+    }
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      if (type === "scan") {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(150, now + 0.35);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.25, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        osc.start(now);
+        osc.stop(now + 0.35);
+      } else if (type === "extract") {
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(180, now);
+        osc.frequency.linearRampToValueAtTime(580, now + 0.22);
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(this.sfxVolume * 0.3, now + 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        osc.start(now);
+        osc.stop(now + 0.22);
+      } else if (type === "inject") {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(130, now);
+        osc.frequency.linearRampToValueAtTime(50, now + 0.18);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.5, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+
+        // Add mechanical click noise
+        const bufferSize = this.ctx.sampleRate * 0.1;
+        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = Math.random() * 2 - 1;
+        }
+        const noise = this.ctx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = this.ctx.createBiquadFilter();
+        filter.type = "bandpass";
+        filter.frequency.setValueAtTime(150, now);
+        const noiseGain = this.ctx.createGain();
+        noiseGain.gain.setValueAtTime(this.sfxVolume * 0.15, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        noise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(this.masterGain);
+        noise.start(now);
+        noise.stop(now + 0.1);
+      } else if (type === "reaction") {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.6);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = "triangle";
+        osc2.frequency.setValueAtTime(660, now);
+        osc2.frequency.linearRampToValueAtTime(220, now + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(this.masterGain);
+        gain2.gain.setValueAtTime(this.sfxVolume * 0.2, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+
+        osc.start(now);
+        osc.stop(now + 0.6);
+        osc2.start(now);
+        osc2.stop(now + 0.45);
+      } else if (type === "strike") {
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(320, now);
+        osc.frequency.linearRampToValueAtTime(120, now + 0.15);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = "sawtooth";
+        osc2.frequency.setValueAtTime(850, now);
+        osc2.connect(gain2);
+        gain2.connect(this.masterGain);
+        gain2.gain.setValueAtTime(this.sfxVolume * 0.08, now);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+        osc.start(now);
+        osc.stop(now + 0.18);
+        osc2.start(now);
+        osc2.stop(now + 0.08);
+      } else if (type === "parry") {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1100, now);
+        osc.frequency.linearRampToValueAtTime(650, now + 0.25);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.45, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+        osc.start(now);
+        osc.stop(now + 0.28);
+      } else if (type === "error") {
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(120, now + 0.18);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.22, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+        osc.start(now);
+        osc.stop(now + 0.18);
+      } else if (type === "success") {
+        const sequence = [440, 554.37, 659.25, 880]; // A4 C#5 E5 A5
+        sequence.forEach((freq, idx) => {
+          const sOsc = this.ctx.createOscillator();
+          const sGain = this.ctx.createGain();
+          sOsc.type = "sine";
+          sOsc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          sOsc.connect(sGain);
+          sGain.connect(this.masterGain);
+          sGain.gain.setValueAtTime(this.sfxVolume * 0.18, now + idx * 0.08);
+          sGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+          sOsc.start(now + idx * 0.08);
+          sOsc.stop(now + idx * 0.08 + 0.25);
+        });
+      } else if (type === "hover") {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1400, now);
+        osc.frequency.linearRampToValueAtTime(900, now + 0.025);
+        gain.gain.setValueAtTime(this.sfxVolume * 0.02, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+        osc.start(now);
+        osc.stop(now + 0.025);
+      }
+    } catch (e) {
+      console.warn("SFX play failed:", e);
+    }
+  }
+
+  startBgm() {
+    if (!this.initialized || this.isMuted || !this.ctx) return;
+    try {
+      this.bgmGain = this.ctx.createGain();
+      this.bgmGain.connect(this.masterGain);
+      this.bgmGain.gain.setValueAtTime(this.bgmVolume * 0.15, this.ctx.currentTime);
+
+      const playPad = () => {
+        if (!this.ctx || this.isMuted) return;
+        try {
+          const padNow = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const filter = this.ctx.createBiquadFilter();
+          const padGain = this.ctx.createGain();
+
+          osc.type = "triangle";
+          const chord = [73.42, 87.31, 110.00, 130.81]; // D2 F2 A2 C3 (Low Dm7)
+          const baseFreq = chord[Math.floor(Math.random() * chord.length)];
+          osc.frequency.setValueAtTime(baseFreq, padNow);
+          osc.frequency.linearRampToValueAtTime(baseFreq * 1.008, padNow + 5.5);
+
+          filter.type = "lowpass";
+          filter.frequency.setValueAtTime(200, padNow);
+          filter.frequency.exponentialRampToValueAtTime(350, padNow + 2.5);
+          filter.frequency.exponentialRampToValueAtTime(200, padNow + 5.5);
+
+          padGain.gain.setValueAtTime(0, padNow);
+          padGain.gain.linearRampToValueAtTime(0.5, padNow + 1.8);
+          padGain.gain.linearRampToValueAtTime(0.5, padNow + 3.8);
+          padGain.gain.linearRampToValueAtTime(0, padNow + 5.5);
+
+          osc.connect(filter);
+          filter.connect(padGain);
+          padGain.connect(this.bgmGain);
+
+          osc.start(padNow);
+          osc.stop(padNow + 5.6);
+        } catch (err) {}
+
+        this.bgmTimeout = setTimeout(playPad, 5000);
+      };
+
+      playPad();
+    } catch (e) {
+      console.warn("BGM start failed:", e);
+    }
+  }
+
+  stopBgm() {
+    if (this.bgmTimeout) clearTimeout(this.bgmTimeout);
+    if (this.bgmGain) {
+      try {
+        this.bgmGain.disconnect();
+      } catch (e) {}
+      this.bgmGain = null;
+    }
+  }
+}
+
+const audio = new EchoAudioEngine();
+
+if (typeof window !== "undefined") {
+  window.addEventListener("click", () => {
+    audio.init();
+  }, { once: true });
+}
+
+/* ==========================================================================
+   Save & Load (LocalStorage)
+   ========================================================================== */
+function saveGameToLocal() {
+  if (typeof window === "undefined" || typeof localStorage === "undefined" || window.navigator?.webdriver || document.body?.dataset?.domClickMode || window.__echoRuntimeIsTesting) return;
+  try {
+    const saveData = {
+      zone: state.zone,
+      ink: state.ink,
+      inventory: state.inventory,
+      flags: state.flags,
+      unlockedZones: state.unlockedZones || ["Z1"],
+      theme: state.theme
+    };
+    const currentZoneId = zone().id;
+    if (!saveData.unlockedZones.includes(currentZoneId)) {
+      saveData.unlockedZones.push(currentZoneId);
+    }
+    localStorage.setItem("echo_string_save_v1.1", JSON.stringify(saveData));
+  } catch (e) {
+    console.warn("LocalStorage save failed:", e);
+  }
+}
+
+function loadGameFromLocal() {
+  if (typeof window === "undefined" || typeof localStorage === "undefined" || window.navigator?.webdriver || document.body?.dataset?.domClickMode || window.__echoRuntimeIsTesting) return;
+  try {
+    const raw = localStorage.getItem("echo_string_save_v1.1");
+    if (!raw) {
+      applyTheme();
+      return;
+    }
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.zone === "number") {
+      state.zone = parsed.zone;
+      state.ink = parsed.ink;
+      state.inventory = parsed.inventory || [];
+      state.flags = parsed.flags || {};
+      state.unlockedZones = parsed.unlockedZones || ["Z1"];
+      state.theme = parsed.theme || "dark";
+      state.zones = freshZones();
+      state.flags = { ...state.flags, ...parsed.flags };
+      applyTheme();
+      log("本地从存档自动载入成功，欢迎回来。", "good");
+    } else {
+      applyTheme();
+    }
+  } catch (e) {
+    console.warn("LocalStorage load failed:", e);
+    applyTheme();
+  }
+}
+
+function applyTheme() {
+  if (typeof document === "undefined") return;
+  if (state.theme === "light") {
+    document.body.classList.add("theme-light");
+    if (el.themeToggleBtn) el.themeToggleBtn.textContent = "☀️ 亮色";
+  } else {
+    document.body.classList.remove("theme-light");
+    if (el.themeToggleBtn) el.themeToggleBtn.textContent = "🌙 暗色";
+  }
+}
+
+function triggerScreenShake(intensity = 'medium') {
+  if (typeof document === "undefined" || window.navigator?.webdriver || document.body?.dataset?.domClickMode || window.__echoRuntimeIsTesting) return;
+  const target = document.querySelector(".app-shell") || document.body;
+  if (!target) return;
+  target.classList.remove("screen-shake-medium", "screen-shake-heavy");
+  void target.offsetWidth; // force reflow
+  target.classList.add(`screen-shake-${intensity}`);
+  setTimeout(() => {
+    target.classList.remove(`screen-shake-${intensity}`);
+  }, 400);
+}
+
+/* ==========================================================================
+   VFX & VFX Utilities (Floating Damage and Reaction Ripples)
+   ========================================================================== */
+function spawnFloatingDamage(amount, targetId, isCritical = false, isParry = false) {
+  if (typeof document === "undefined") return;
+  const container = document.getElementById("effectsContainer");
+  if (!container) return;
+  const elCard = document.querySelector(`[data-object-id="${targetId}"]`);
+  if (!elCard) return;
+  const rect = elCard.getBoundingClientRect();
+  
+  const dam = document.createElement("div");
+  dam.className = `floating-damage${isCritical ? " critical" : ""}${isParry ? " parry-text" : ""}`;
+  dam.style.left = `${rect.left + rect.width / 2 + (Math.random() * 40 - 20)}px`;
+  dam.style.top = `${rect.top + rect.height / 2 - 20}px`;
+  dam.textContent = amount;
+  container.appendChild(dam);
+  setTimeout(() => {
+    dam.remove();
+  }, 800);
+}
+
+function triggerVisualRipple(reactionId, targetId) {
+  if (typeof document === "undefined") return;
+  const container = document.getElementById("effectsContainer");
+  if (!container) return;
+  
+  const elCard = document.querySelector(`[data-object-id="${targetId}"]`);
+  let x = window.innerWidth / 2;
+  let y = window.innerHeight / 2;
+  if (elCard) {
+    const rect = elCard.getBoundingClientRect();
+    x = rect.left + rect.width / 2;
+    y = rect.top + rect.height / 2;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "reaction-ripple-overlay";
+  
+  const circle = document.createElement("div");
+  let cls = "field";
+  if (reactionId === "Reaction.SteamBurst") cls = "steam";
+  else if (reactionId === "Reaction.FractureWindow") cls = "fracture";
+  circle.className = `ripple-circle ${cls}`;
+  circle.style.left = `${x}px`;
+  circle.style.top = `${y}px`;
+  circle.style.transform = "translate(-50%, -50%)";
+
+  overlay.appendChild(circle);
+  container.appendChild(overlay);
+  setTimeout(() => {
+    overlay.remove();
+  }, 1300);
+}
+
 const TEST_MODES = {
   guided: "引导",
   low: "低引导",
@@ -200,7 +594,10 @@ const state = {
   undoStack: [],
   checkpoints: {},
   log: [],
-  lastFeedback: null
+  lastFeedback: null,
+  unlockedZones: ["Z1"],
+  completionSfxPlayed: false,
+  theme: "dark"
 };
 
 const el = {
@@ -236,7 +633,8 @@ const el = {
   clearInventoryBtn: document.getElementById("clearInventoryBtn"),
   refillInkBtn: document.getElementById("refillInkBtn"),
   resetZoneBtn: document.getElementById("resetZoneBtn"),
-  downloadReportBtn: document.getElementById("downloadReportBtn")
+  downloadReportBtn: document.getElementById("downloadReportBtn"),
+  themeToggleBtn: document.getElementById("themeToggleBtn")
 };
 
 function zone() {
@@ -559,6 +957,7 @@ function log(message, type = "", category = "general") {
     state.metrics.failureCounts[category] = (state.metrics.failureCounts[category] || 0) + 1;
     state.metrics.failureEvents.unshift(event);
     state.metrics.failureEvents = state.metrics.failureEvents.slice(0, 24);
+    audio.playSfx("error");
   }
   state.lastFeedback = event;
   state.metrics.feedbackEvents.unshift(event);
@@ -660,6 +1059,7 @@ function scanSelected() {
   obj.scanned = true;
   state.metrics.scans += 1;
   markFirst("firstScanSec");
+  audio.playSfx("scan");
   log(`扫描到 ${obj.name}：${obj.currentTags.map(tagName).join(" / ") || "无显性词缀"}。`, "good");
   render();
 }
@@ -688,6 +1088,7 @@ function extractSelectedTag() {
   state.selectedInventoryIndex = state.inventory.length - 1;
   state.metrics.extracts += 1;
   markFirst("firstExtractSec");
+  audio.playSfx("extract");
   if (!obj.persistentSource && !obj.lockedSlots.includes(def.slot)) {
     obj.currentTags = obj.currentTags.filter((item) => item !== tagId);
   }
@@ -734,10 +1135,12 @@ function injectSelectedInventory() {
   state.metrics.injects += 1;
   markFirst("firstInjectSec");
   if (obj.id === "warden") state.metrics.bossSemanticActions += 1;
+  audio.playSfx("inject");
   log(`向 ${obj.name} 注入“${def.name}”。`, "good");
   applyImmediateEffects(obj, tagId);
   if (collisionReaction) triggerReaction(obj, collisionReaction);
   resolveReactions(obj);
+  saveGameToLocal();
   render();
 }
 
@@ -794,6 +1197,9 @@ function triggerReaction(obj, reactionId) {
     state.flags.steamBurst = true;
     obj.currentTags = obj.currentTags.filter((id) => id !== "Semantic.Medium.Wet");
     applyReactionHpDamage(obj, 12);
+    triggerVisualRipple(reactionId, obj.id);
+    audio.playSfx("reaction");
+    triggerScreenShake("medium");
     if (obj.id === "warden") reduceBossShield(obj, "蒸汽爆发撕开第一层护文。", reactionId);
     log("触发组合反应：蒸汽爆发。", "good");
     return true;
@@ -801,6 +1207,9 @@ function triggerReaction(obj, reactionId) {
 
   if (reactionId === "Reaction.FractureWindow") {
     obj.fractureWindow = true;
+    triggerVisualRipple(reactionId, obj.id);
+    audio.playSfx("reaction");
+    triggerScreenShake("medium");
     log("触发组合反应：破裂窗口。下一次重击会造成高额破坏。", "good");
     return true;
   }
@@ -808,6 +1217,9 @@ function triggerReaction(obj, reactionId) {
   if (reactionId === "Reaction.FieldPulse") {
     state.flags.fieldPulse = true;
     applyReactionHpDamage(obj, 8);
+    triggerVisualRipple(reactionId, obj.id);
+    audio.playSfx("reaction");
+    triggerScreenShake("medium");
     if (obj.id === "warden") reduceBossShield(obj, "力场震荡打散第三层护文。", reactionId);
     log("触发组合反应：力场震荡。", "good");
     return true;
@@ -856,7 +1268,11 @@ function heavyStrike() {
   if (obj.id === "gate" && obj.currentTags.includes("Semantic.Structure.Fragile")) {
     obj.destroyed = true;
     state.flags.gateDestroyed = true;
+    audio.playSfx("success");
+    spawnFloatingDamage("击碎", "gate", true);
+    triggerScreenShake("heavy");
     log("封文大门被击碎。", "good");
+    saveGameToLocal();
     return render();
   }
   if (obj.hp != null && !obj.defeated) {
@@ -871,6 +1287,12 @@ function heavyStrike() {
     }
     obj.hp = Math.max(0, Math.round(obj.hp - damage));
     obj.breach = true;
+    
+    // SFX and floating damage
+    audio.playSfx("strike");
+    spawnFloatingDamage(Math.round(damage), obj.id, damage > 16 || hadFractureWindow);
+    triggerScreenShake(damage > 16 || hadFractureWindow ? "heavy" : "medium");
+    
     log(`重击命中 ${obj.name}，造成 ${Math.round(damage)} 点伤害，并打开短暂破绽。`, "good");
     if (obj.id === "warden" && hadFractureWindow && obj.shieldLayers > 0) {
       const reduced = reduceBossShield(obj, "冻结裂隙被重击扩开，第二层护文破碎。", "Reaction.FractureWindow");
@@ -881,11 +1303,14 @@ function heavyStrike() {
     }
     if (obj.hp === 0) {
       obj.defeated = true;
+      audio.playSfx("success");
       log(`${obj.name} 被击败。`, "good");
       if (obj.id === "warden") state.flags.bossDefeated = true;
     }
+    saveGameToLocal();
     return render();
   }
+  audio.playSfx("error");
   log("重击没有产生关键效果。", "warn");
   render();
 }
@@ -896,7 +1321,11 @@ function parry() {
   state.metrics.parries += 1;
   obj.breach = true;
   obj.scanned = true;
+  audio.playSfx("parry");
+  spawnFloatingDamage("PARRY", obj.id, false, true);
+  triggerScreenShake("medium");
   log(`完美弹反 ${obj.name}，语义破绽打开。`, "good");
+  saveGameToLocal();
   render();
 }
 
@@ -955,11 +1384,20 @@ function nextZone() {
     state.inventory = [];
     state.undoStack = [];
     state.ink = Math.min(12, state.ink + 4);
+    
+    // Unlock next zone in progression
+    const nextZoneId = zone().id;
+    if (state.unlockedZones && !state.unlockedZones.includes(nextZoneId)) {
+      state.unlockedZones.push(nextZoneId);
+    }
+    
     const zoneId = zone().id;
     state.metrics.zoneVisits[zoneId] = (state.metrics.zoneVisits[zoneId] || 0) + 1;
     if (isFinalZone()) state.metrics.completedAt = state.metrics.completedAt ?? elapsedSeconds();
     saveZoneCheckpoint(`${zone().id}入口检查点`);
+    audio.playSfx("success");
     log(`进入 ${zone().id}：${zone().name}。原墨恢复少量，临时词库已归档。`, "good");
+    saveGameToLocal();
     render();
   }
 }
@@ -981,6 +1419,7 @@ function resetGame() {
   state.checkpoints = {};
   state.log = [];
   state.lastFeedback = null;
+  state.completionSfxPlayed = false;
   log("原型已重置。", "good");
   saveZoneCheckpoint("Z1入口检查点");
   render();
@@ -2078,6 +2517,57 @@ function renderMetrics() {
   `;
 }
 
+function calculateEndingBadges(report) {
+  const badges = [];
+  
+  // Reaction Master
+  const reactionTypes = new Set(Object.entries(report.metrics.reactionCounts).filter(([k,v]) => v > 0).map(([k,v]) => k)).size;
+  if (reactionTypes >= 3 || report.metrics.reactions >= 4) {
+    badges.push({
+      icon: "🧪",
+      name: "反应大师",
+      desc: "成功触发了全部三种核心语义组合反应。"
+    });
+  }
+
+  // Ink Efficiency
+  if (report.ink >= 10) {
+    badges.push({
+      icon: "✒️",
+      name: "省墨专家",
+      desc: "通关时仍保留 10 点以上的充足原墨。"
+    });
+  }
+
+  // Parry Master
+  if (report.metrics.parries >= 2) {
+    badges.push({
+      icon: "🛡️",
+      name: "完美防卫者",
+      desc: "在断廊战斗中成功执行了两次完美弹反。"
+    });
+  }
+
+  // No Undo
+  if (report.metrics.undoUses === 0 && report.metrics.checkpointRestores === 0) {
+    badges.push({
+      icon: "⏳",
+      name: "无瑕修正者",
+      desc: "没有使用任何撤销或检查点恢复通过全关。"
+    });
+  }
+
+  if (badges.length === 0) {
+    badges.push({
+      icon: "📜",
+      name: "合格异墨者",
+      desc: "成功克服故障谜题，跨入修正文库门槛。"
+    });
+  }
+
+  return badges;
+}
+
 function renderCompletionPanel() {
   if (!el.completionPanel) return;
   const report = buildReport();
@@ -2086,6 +2576,12 @@ function renderCompletionPanel() {
     el.completionPanel.innerHTML = "";
     return;
   }
+  
+  if (!state.completionSfxPlayed) {
+    audio.playSfx("success");
+    state.completionSfxPlayed = true;
+  }
+
   const longestDuration = Math.max(1, ...report.zoneDurations.map((item) => item.durationSec));
   const verdict = completionVerdict(report);
   const zoneRows = report.zoneDurations.map((item) => `
@@ -2109,6 +2605,16 @@ function renderCompletionPanel() {
   const auditRisks = report.audit.risks.length
     ? report.audit.risks.map((item) => `<li>${item}</li>`).join("")
     : "<li>未发现明显阻塞。</li>";
+    
+  const badges = calculateEndingBadges(report);
+  const badgeHtml = badges.map(b => `
+    <div class="ending-badge">
+      <span class="icon">${b.icon}</span>
+      <span class="name">${b.name}</span>
+      <span class="desc">${b.desc}</span>
+    </div>
+  `).join("");
+
   el.completionPanel.className = "completion-panel";
   el.completionPanel.innerHTML = `
     <div class="completion-head">
@@ -2133,6 +2639,12 @@ function renderCompletionPanel() {
       ${metricHtml("检查点", report.metrics.checkpointRestores)}
       ${metricHtml("撤销", report.metrics.undoUses)}
     </div>
+    
+    <div class="completion-badges-section">
+      <p class="label" style="text-align:center; margin-bottom: 12px; font-weight:700;">获得异墨勋章 (Badges Earned)</p>
+      <div class="ending-badge-list">${badgeHtml}</div>
+    </div>
+
     <div class="completion-verdict ${verdict.tone}">
       <strong>${verdict.title}</strong>
       <span>${verdict.detail}</span>
@@ -2161,6 +2673,13 @@ function renderCompletionPanel() {
         <div class="reaction-ledger">${failureRows}</div>
       </div>
     </div>
+    
+    <div class="pitch-container">
+      <h4>关注《语弦生态：创世纪》主线开发 / Add to Wishlist</h4>
+      <p>完整版将包含 5 大文明语系变迁、主谓宾句法因果闭环、实时流体物理模拟及更宏大的叙事修正冒险！</p>
+      <button class="wishlist-btn" onclick="window.open('https://github.com/wangjiehu/echo-string-genesis-prototype', '_blank')">🚀 关注项目开源库 / Wishlist</button>
+    </div>
+
     <table class="zone-summary-table">
       <thead><tr><th>区域</th><th>模式</th><th>耗时</th><th>结果</th></tr></thead>
       <tbody>${zoneRows}</tbody>
@@ -2273,6 +2792,126 @@ function runShortcut(key) {
   fn();
 }
 
+function initSettings() {
+  if (typeof document === "undefined") return;
+  const settingsBtn = document.getElementById("settingsBtn");
+  const settingsPanel = document.getElementById("settingsPanel");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const bgmVolumeSlider = document.getElementById("bgmVolumeSlider");
+  const bgmVolumeVal = document.getElementById("bgmVolumeVal");
+  const sfxVolumeSlider = document.getElementById("sfxVolumeSlider");
+  const sfxVolumeVal = document.getElementById("sfxVolumeVal");
+  const resetSaveDataBtn = document.getElementById("resetSaveDataBtn");
+
+  if (settingsBtn && settingsPanel && closeSettingsBtn) {
+    settingsBtn.addEventListener("click", () => {
+      settingsPanel.classList.remove("hidden");
+      renderSettingsZones();
+    });
+    closeSettingsBtn.addEventListener("click", () => {
+      settingsPanel.classList.add("hidden");
+    });
+  }
+
+  if (bgmVolumeSlider && bgmVolumeVal) {
+    bgmVolumeSlider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      bgmVolumeVal.textContent = `${val}%`;
+      audio.setBgmVolume(val / 100);
+    });
+  }
+
+  if (sfxVolumeSlider && sfxVolumeVal) {
+    sfxVolumeSlider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      sfxVolumeVal.textContent = `${val}%`;
+      audio.setSfxVolume(val / 100);
+    });
+  }
+
+  if (resetSaveDataBtn) {
+    resetSaveDataBtn.addEventListener("click", () => {
+      if (confirm("确定要清空本地存档吗？所有关卡进度将被重置。")) {
+        localStorage.removeItem("echo_string_save_v1.1");
+        state.zone = 0;
+        state.ink = 12;
+        state.inventory = [];
+        state.flags = {};
+        state.unlockedZones = ["Z1"];
+        state.zones = freshZones();
+        log("本地存档已清空。", "warn");
+        if (settingsPanel) settingsPanel.classList.add("hidden");
+        render();
+      }
+    });
+  }
+}
+
+function renderSettingsZones() {
+  const container = document.getElementById("settingsZoneSelect");
+  if (!container) return;
+  container.innerHTML = "";
+  
+  const unlocked = state.unlockedZones || ["Z1"];
+  state.zones.forEach((z, index) => {
+    const isUnlocked = unlocked.includes(z.id) || index <= state.zone;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = `settings-zone-btn ${isUnlocked ? "unlocked" : "locked"} ${index === state.zone ? "active" : ""}`;
+    btn.textContent = z.id;
+    if (index === state.zone) {
+      btn.title = "当前所在区域";
+    } else if (isUnlocked) {
+      btn.addEventListener("click", () => {
+        audio.playSfx("success");
+        recordZoneDuration("manual-switch");
+        state.zone = index;
+        state.selectedObjectId = null;
+        state.selectedTagId = null;
+        state.selectedInventoryIndex = null;
+        state.metrics.zoneVisits[zone().id] = (state.metrics.zoneVisits[zone().id] || 0) + 1;
+        state.metrics.zoneVisitStartSec = elapsedSeconds();
+        const settingsPanel = document.getElementById("settingsPanel");
+        if (settingsPanel) settingsPanel.classList.add("hidden");
+        render();
+      });
+    } else {
+      btn.className += " locked";
+      btn.disabled = true;
+      btn.title = "通关前置关卡解锁";
+    }
+    container.appendChild(btn);
+  });
+}
+
+function initPrologue() {
+  if (typeof document === "undefined") return;
+  const overlay = document.getElementById("prologueOverlay");
+  const startBtn = document.getElementById("startPrologueBtn");
+  
+  const isRegression = (
+    window.navigator?.webdriver || 
+    window.__echoRuntimeIsTesting || 
+    new URLSearchParams(window.location.search).has("regression") || 
+    document.body?.dataset?.domClickMode || 
+    window.location.search.includes("mode=")
+  );
+
+  if (isRegression) {
+    if (overlay) overlay.classList.add("hidden");
+    audio.isMuted = true;
+    return;
+  }
+
+  if (startBtn && overlay) {
+    startBtn.addEventListener("click", () => {
+      overlay.classList.add("hidden");
+      audio.init();
+      audio.playSfx("success");
+    });
+  }
+}
+
 el.resetBtn.addEventListener("click", resetGame);
 el.undoBtn.addEventListener("click", undoLastSemanticAction);
 el.checkpointBtn.addEventListener("click", restoreZoneCheckpoint);
@@ -2281,6 +2920,16 @@ el.restartSessionBtn.addEventListener("click", resetGame);
 el.modeButtons.forEach((button) => {
   button.addEventListener("click", () => setTestMode(button.dataset.mode));
 });
+if (el.themeToggleBtn) {
+  el.themeToggleBtn.addEventListener("click", () => {
+    state.theme = state.theme === "light" ? "dark" : "light";
+    applyTheme();
+    saveGameToLocal();
+    if (typeof audio !== "undefined" && audio.playSfx) {
+      audio.playSfx("success");
+    }
+  });
+}
 el.clearInventoryBtn.addEventListener("click", () => {
   if (state.inventory.length) pushUndo("清空临时词库");
   state.inventory = [];
@@ -2333,6 +2982,30 @@ window.__echoString = {
 };
 
 applyInitialModeFromUrl();
+loadGameFromLocal();
+initPrologue();
+initSettings();
 saveZoneCheckpoint("Z1入口检查点");
-log("选择封文大门或裂纹石像开始。", "good");
+if (!state.log.length) {
+  log("选择封文大门或裂纹石像开始。", "good");
+}
 render();
+
+// Global Hover Sound Effect Delegation
+if (typeof document !== "undefined") {
+  document.body.addEventListener("mouseover", (e) => {
+    const target = e.target.closest("button, .tag-pill, .object-card, .inventory-item, .settings-zone-btn");
+    if (target && target !== window.__lastHoveredElement) {
+      window.__lastHoveredElement = target;
+      if (typeof audio !== "undefined" && audio.playSfx) {
+        audio.playSfx("hover");
+      }
+    }
+  });
+  document.body.addEventListener("mouseout", (e) => {
+    const target = e.target.closest("button, .tag-pill, .object-card, .inventory-item, .settings-zone-btn");
+    if (target && (!e.relatedTarget || !e.relatedTarget.closest || e.relatedTarget.closest("button, .tag-pill, .object-card, .inventory-item, .settings-zone-btn") !== target)) {
+      window.__lastHoveredElement = null;
+    }
+  });
+}
