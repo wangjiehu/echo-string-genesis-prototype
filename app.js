@@ -2906,7 +2906,6 @@ function initPrologue() {
   const startBtn = document.getElementById("startPrologueBtn");
   
   const isRegression = (
-    window.navigator?.webdriver || 
     window.__echoRuntimeIsTesting || 
     new URLSearchParams(window.location.search).has("regression") || 
     document.body?.dataset?.domClickMode || 
@@ -3031,7 +3030,6 @@ function initLayoutInteractive() {
   if (typeof document === "undefined") return;
 
   const isRegression = (
-    window.navigator?.webdriver || 
     window.__echoRuntimeIsTesting || 
     new URLSearchParams(window.location.search).has("regression") || 
     document.body?.dataset?.domClickMode || 
