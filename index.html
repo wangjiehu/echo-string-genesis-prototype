@@ -83,6 +83,8 @@
         </div>
         <div class="topbar-controls">
           <div class="topbar-controls-row">
+            <button id="travelMapBtn" class="theme-toggle-btn" type="button" aria-label="旅行地图">🌐 地图</button>
+            <button id="toggleLogsBtn" class="theme-toggle-btn" type="button" aria-label="历史日志">📜 日志</button>
             <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="切换主题">🌗 主题</button>
             <button id="settingsBtn" class="settings-toggle-btn" type="button" aria-label="游戏配置">⚙️ 配置</button>
             <div class="mode-switch" aria-label="测试模式">
@@ -130,7 +132,10 @@
         <aside class="panel zone-panel">
           <div class="panel-heading">
             <span class="label">流程</span>
-            <button id="resetBtn" class="quiet-button" type="button">重置</button>
+            <div>
+              <button id="resetBtn" class="quiet-button" type="button">重置</button>
+              <button id="closeTravelBtn" class="quiet-button close-btn" type="button" aria-label="关闭地图">❌ 关闭</button>
+            </div>
           </div>
           <div id="zoneList" class="zone-list"></div>
         </aside>
@@ -159,6 +164,7 @@
           <div class="panel-heading">
             <span class="label">扫描器</span>
             <span id="selectedHint" class="hint">未选择对象</span>
+            <button id="closeInspectorBtn" class="quiet-button close-btn" type="button" aria-label="关闭扫描器">❌</button>
           </div>
           <div id="inspector" class="inspector-empty">
             选择场景中的对象，然后扫描。
