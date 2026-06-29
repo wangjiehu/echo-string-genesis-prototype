@@ -12,12 +12,68 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <!-- Screen Effects Overlay -->
+    <div class="screen-effects-overlay"></div>
+    <!-- Narrative Prologue Overlay -->
+    <div id="prologueOverlay" class="prologue-overlay">
+      <div class="prologue-box">
+        <div class="prologue-glitch-title">ECHO-STRING</div>
+        <p class="prologue-tagline">《语弦生态：创世纪》叙事恢复接口 v1.1.0</p>
+        <div class="prologue-content">
+          <p class="prologue-line">世界由原初作者写就，却在失去维护后分崩离析。</p>
+          <p class="prologue-line">“重词污染”与“语义冲突”正疯狂蚕食着仅存的物性规则。</p>
+          <p class="prologue-line">作为流淌着空白原墨的“异墨者 · 楷”，你将能够读取并修改物体的底层语义。</p>
+          <p class="prologue-line">请穿过故障的“断句庭院”，剥离、注入和重写代码，完成原初修复考验。</p>
+          <p class="prologue-line">点击下方按钮建立同步链路，重塑万物法则。</p>
+        </div>
+        <button id="startPrologueBtn" class="prologue-btn" type="button">建立同步链路</button>
+      </div>
+    </div>
+
+    <!-- Settings Menu Overlay -->
+    <div id="settingsPanel" class="settings-panel hidden">
+      <div class="settings-box">
+        <div class="settings-header">
+          <h3>系统配置 (Settings)</h3>
+          <button id="closeSettingsBtn" class="close-settings-btn" type="button">&times;</button>
+        </div>
+        <div class="settings-body">
+          <div class="setting-item">
+            <label for="bgmVolumeSlider">环境背景垫音 (Ambient BGM)</label>
+            <div class="slider-row">
+              <input type="range" id="bgmVolumeSlider" min="0" max="100" value="50">
+              <span id="bgmVolumeVal">50%</span>
+            </div>
+          </div>
+          <div class="setting-item">
+            <label for="sfxVolumeSlider">系统交互音效 (System SFX)</label>
+            <div class="slider-row">
+              <input type="range" id="sfxVolumeSlider" min="0" max="100" value="70">
+              <span id="sfxVolumeVal">70%</span>
+            </div>
+          </div>
+          <div class="setting-item">
+            <button id="resetSaveDataBtn" class="danger-button" type="button">清空本地存档 (Reset Save)</button>
+          </div>
+          <div class="setting-item">
+            <h4>快速旅行 (关卡直接跳转)</h4>
+            <div id="settingsZoneSelect" class="settings-zone-select">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VFX Floating Effects Container -->
+    <div id="effectsContainer" class="effects-container"></div>
+
     <main class="app-shell">
       <header class="topbar">
         <div class="title-block">
@@ -26,10 +82,14 @@
           <span class="build-pill">1.0.0 Public Playtest</span>
         </div>
         <div class="topbar-controls">
-          <div class="mode-switch" aria-label="测试模式">
-            <button class="mode-button active" type="button" data-mode="guided" data-testid="mode-guided" aria-pressed="true">引导</button>
-            <button class="mode-button" type="button" data-mode="low" data-testid="mode-low" aria-pressed="false">低引导</button>
-            <button class="mode-button" type="button" data-mode="debug" data-testid="mode-debug" aria-pressed="false">调试</button>
+          <div class="topbar-controls-row">
+            <button id="themeToggleBtn" class="theme-toggle-btn" type="button" aria-label="切换主题">🌗 主题</button>
+            <button id="settingsBtn" class="settings-toggle-btn" type="button" aria-label="游戏配置">⚙️ 配置</button>
+            <div class="mode-switch" aria-label="测试模式">
+              <button class="mode-button active" type="button" data-mode="guided" data-testid="mode-guided" aria-pressed="true">引导</button>
+              <button class="mode-button" type="button" data-mode="low" data-testid="mode-low" aria-pressed="false">低引导</button>
+              <button class="mode-button" type="button" data-mode="debug" data-testid="mode-debug" aria-pressed="false">调试</button>
+            </div>
           </div>
           <div class="status-strip" aria-label="玩家状态">
             <div class="status-card ink-card">
