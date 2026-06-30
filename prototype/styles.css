@@ -3978,6 +3978,129 @@ body.theme-light .tag-dot.unknown {
   border-color: rgba(160, 125, 90, 0.45) !important;
 }
 
+/* 5. Snug Content & Bottom-Aligned Slots for Holographic Object Cards */
+body:not(.regression-mode) .object-token {
+  justify-content: flex-start !important;
+  gap: 0 !important;
+}
+
+body:not(.regression-mode) .object-token strong {
+  margin: 12px 0 4px 0 !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+body:not(.regression-mode) .object-token small {
+  margin: 0 !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  opacity: 0.8 !important;
+}
+
+body:not(.regression-mode) .object-token .hp-bar {
+  margin-top: 10px !important;
+  margin-bottom: 4px !important;
+}
+
+body:not(.regression-mode) .object-token .mini-tags {
+  margin-top: auto !important; /* Push tags/slots to the bottom of the card */
+  padding-top: 16px !important;
+}
+
+/* 6. Vertical Redesign for Action Feedback Alert Panel (Result Pulse) */
+body:not(.regression-mode) .result-pulse {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 6px !important;
+  padding: 12px 16px !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid var(--line) !important;
+  border-left: 4px solid var(--accent) !important;
+  background: var(--panel) !important;
+  min-height: auto !important;
+  margin-top: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.regression-mode) .result-pulse span {
+  display: inline-block !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.05em !important;
+  width: auto !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+/* Tone specific badge colors for light theme */
+body.theme-light .result-pulse span {
+  background: #eef6ff !important;
+  color: #1e5ba0 !important;
+  border: 1px solid rgba(30, 91, 160, 0.2) !important;
+}
+body.theme-light .result-pulse.good span {
+  background: #edf8f2 !important;
+  color: #2e8b57 !important;
+  border: 1px solid rgba(46, 139, 87, 0.2) !important;
+}
+body.theme-light .result-pulse.warn span {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+  border: 1px solid rgba(180, 83, 9, 0.2) !important;
+}
+body.theme-light .result-pulse.bad span {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid rgba(185, 28, 28, 0.2) !important;
+}
+
+/* Tone specific badge colors for dark theme */
+body:not(.theme-light) .result-pulse span {
+  background: rgba(35, 100, 170, 0.12) !important;
+  color: #60a5fa !important;
+  border: 1px solid rgba(35, 100, 170, 0.25) !important;
+}
+body:not(.theme-light) .result-pulse.good span {
+  background: rgba(16, 185, 129, 0.12) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+body:not(.theme-light) .result-pulse.warn span {
+  background: rgba(245, 158, 11, 0.12) !important;
+  color: #fbbf24 !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+body:not(.theme-light) .result-pulse.bad span {
+  background: rgba(239, 68, 68, 0.12) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.25) !important;
+}
+
+body:not(.regression-mode) .result-pulse strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+body:not(.regression-mode) .result-pulse small {
+  display: block !important;
+  font-size: 12px !important;
+  color: var(--muted) !important;
+  line-height: 1.45 !important;
+  margin: 2px 0 0 0 !important;
+  opacity: 0.9 !important;
+}
+
+
 
 
 
