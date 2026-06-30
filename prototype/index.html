@@ -141,23 +141,25 @@
         </aside>
 
         <section class="stage-panel">
-          <div class="stage-header">
-            <div>
-              <p class="label">当前目标</p>
-              <h2 id="zoneTitle"></h2>
+          <div class="tactical-deck">
+            <div class="stage-header">
+              <div>
+                <p class="label">当前目标</p>
+                <h2 id="zoneTitle"></h2>
+              </div>
+              <p id="zoneObjective" class="objective"></p>
             </div>
-            <p id="zoneObjective" class="objective"></p>
+            <div class="guidance-strip">
+              <span class="label">下一步</span>
+              <strong id="nextHint">选择场景中的对象。</strong>
+            </div>
+            <div id="resultPulse" class="result-pulse" aria-live="polite"></div>
+            <div id="decisionStrip" class="decision-strip" aria-label="当前决策摘要"></div>
+            <div id="stepList" class="step-list" aria-label="区域步骤"></div>
+            <div id="contextActions" class="context-actions"></div>
+            <div id="actionHelp" class="action-help"></div>
           </div>
-          <div class="guidance-strip">
-            <span class="label">下一步</span>
-            <strong id="nextHint">选择场景中的对象。</strong>
-          </div>
-          <div id="resultPulse" class="result-pulse" aria-live="polite"></div>
-          <div id="decisionStrip" class="decision-strip" aria-label="当前决策摘要"></div>
-          <div id="stepList" class="step-list" aria-label="区域步骤"></div>
-          <div id="contextActions" class="context-actions"></div>
           <div id="sceneMap" class="scene-map" aria-label="场景对象"></div>
-          <div id="actionHelp" class="action-help"></div>
         </section>
 
         <aside class="panel inspector-panel">

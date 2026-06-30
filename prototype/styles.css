@@ -451,6 +451,10 @@ h2 {
   padding: 16px;
 }
 
+.tactical-deck {
+  display: contents;
+}
+
 .stage-header {
   order: 1;
 }
@@ -4114,6 +4118,218 @@ body.theme-light .session-actions .quiet-button:hover {
   border-color: rgba(139, 115, 85, 0.4) !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
 }
+
+/* ==========================================================================
+   🌌 Ambient Vignette & Glowing Atmosphere Softening (Both Themes)
+   ========================================================================== */
+body:not(.theme-light) .screen-effects-overlay {
+  opacity: 0.04 !important; /* Soften dark scanline/vignette overlay */
+}
+body.theme-light .screen-effects-overlay {
+  opacity: 0.07 !important; /* Soften sepia paper vignette overlay */
+}
+
+/* Soften glow variables */
+:root {
+  --glow-green: 0 0 10px rgba(52, 211, 153, 0.25) !important;
+  --glow-green-strong: 0 0 16px rgba(52, 211, 153, 0.35) !important;
+}
+
+/* Soften element shadows globally */
+body:not(.theme-light) .status-card,
+body:not(.theme-light) .session-panel,
+body:not(.theme-light) .decision-chip,
+body:not(.theme-light) .step-item,
+body:not(.theme-light) .object-token {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25) !important;
+}
+body.theme-light .status-card,
+body.theme-light .session-panel,
+body.theme-light .decision-chip,
+body.theme-light .step-item,
+body.theme-light .object-token {
+  box-shadow: 0 3px 10px rgba(139, 115, 85, 0.08) !important;
+}
+
+/* ==========================================================================
+   ⚡ Compact Header HUD & Inline Player Metrics
+   ========================================================================== */
+body:not(.regression-mode) .topbar {
+  padding: 10px 24px !important;
+  min-height: auto !important;
+  height: 56px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+body:not(.regression-mode) .title-block {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+body:not(.regression-mode) .title-block h1 {
+  font-size: 19px !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+body:not(.regression-mode) .title-block .eyebrow {
+  display: none !important; /* Hide small subtitle to save vertical space */
+}
+
+body:not(.regression-mode) .title-block .build-pill {
+  margin: 0 !important;
+  font-size: 10px !important;
+  padding: 2px 6px !important;
+}
+
+body:not(.regression-mode) .topbar-controls {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 20px !important;
+}
+
+body:not(.regression-mode) .status-strip {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+body:not(.regression-mode) .status-card {
+  flex-direction: row !important;
+  gap: 8px !important;
+  padding: 6px 14px !important;
+  min-width: auto !important;
+  height: 30px !important;
+  align-items: center !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+body:not(.regression-mode) .status-card span {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  letter-spacing: 0.5px !important;
+}
+
+body:not(.regression-mode) .status-card strong {
+  font-size: 13px !important;
+  margin: 0 !important;
+  font-weight: 700 !important;
+}
+
+body:not(.regression-mode) .status-card i.status-meter {
+  display: none !important; /* Hide meter inside status card */
+}
+
+/* ==========================================================================
+   📐 Split-Console Sidebar (Tactical Deck Sidebar)
+   ========================================================================== */
+body:not(.regression-mode) .stage-panel {
+  display: grid !important;
+  grid-template-columns: 400px 1fr !important;
+  gap: 0 !important;
+  height: 100% !important;
+  max-height: calc(100vh - 145px) !important; /* fit perfectly inside layout */
+  min-height: auto !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.regression-mode) .tactical-deck {
+  grid-column: 1 !important;
+  background: var(--panel-2) !important; /* Sidebar panel background tint */
+  border-right: 1.5px dashed var(--line) !important; /* Vertical dashed divider */
+  padding: 20px 20px 240px 20px !important; /* Padding-bottom clears fixed log tab */
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  overflow-y: auto !important; /* Local vertical scrollbar */
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.regression-mode) .scene-map {
+  grid-column: 2 !important;
+  grid-row: 1 / span 12 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  padding: 20px 24px 240px 24px !important;
+  margin: 0 !important;
+  align-content: start !important;
+  border-top: none !important;
+}
+
+/* ==========================================================================
+   🚪 Collapsible Left-Sliding Logs Drawer
+   ========================================================================== */
+body:not(.regression-mode) .bottom-panel {
+  position: fixed !important;
+  z-index: 3000 !important; /* High z-index overlays on top of the workspace */
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  transform: translateX(-100%) !important; /* Completely off-screen to the left */
+  width: 440px !important; /* Sidebar drawer width */
+  height: 100vh !important;
+  background: var(--panel-solid) !important;
+  border: none !important;
+  border-right: 3px solid var(--accent) !important; /* Glowing colored accent line on the right */
+  border-radius: 0 !important;
+  box-shadow: 12px 0 45px rgba(0, 0, 0, 0.35) !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  margin: 0 !important;
+  padding: 24px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 16px !important;
+  overflow-y: auto !important;
+}
+
+body:not(.regression-mode) .bottom-panel.open {
+  transform: translateX(0) !important; /* Slide in! */
+}
+
+/* Event log title inside left side drawer layout */
+body:not(.regression-mode) .bottom-panel::before {
+  content: "系统历史日志 / System Logs" !important;
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
+  border-bottom: 1.5px dashed var(--line) !important;
+  padding-bottom: 10px !important;
+  margin-bottom: 4px !important;
+}
+
+body:not(.regression-mode) .bottom-panel > div {
+  width: 100% !important;
+  flex: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+
+body:not(.regression-mode) .bottom-panel .log-panel {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 200px !important;
+}
+
+body:not(.regression-mode) .bottom-panel .event-log {
+  flex: 1 !important;
+  max-height: 260px !important;
+  overflow-y: auto !important;
+}
+
 
 
 
