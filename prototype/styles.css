@@ -3838,6 +3838,147 @@ body:not(.theme-light) .step-item.active {
   color: #a7f3d0 !important;
 }
 
+/* ==========================================================================
+   📐 Unified Layout & Alignment Refinements (Applies to both Dark & Light Themes)
+   ========================================================================== */
+
+/* 1. Unified Session Status HUD Bar spanning full width */
+body:not(.regression-mode) .session-panel {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 10px 18px !important;
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: 0 8px 30px var(--shadow-soft) !important;
+  margin-bottom: 20px !important;
+}
+
+body:not(.regression-mode) .session-status {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 32px !important;
+  align-items: center !important;
+  width: auto !important;
+  flex: none !important;
+}
+
+body:not(.regression-mode) .session-chip {
+  min-height: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  position: relative !important;
+}
+
+/* Vertical divider lines between session chips */
+body:not(.regression-mode) .session-chip:not(:last-child)::after {
+  content: "" !important;
+  position: absolute !important;
+  right: -16px !important;
+  top: 4px !important;
+  height: 20px !important;
+  width: 1px !important;
+  background: var(--line-strong) !important;
+  opacity: 0.6 !important;
+}
+
+body:not(.regression-mode) .session-chip span {
+  display: block !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: var(--muted) !important;
+}
+
+body:not(.regression-mode) .session-chip strong {
+  display: block !important;
+  font-size: 13px !important;
+  color: var(--ink) !important;
+  margin-top: 2px !important;
+}
+
+body:not(.regression-mode) .session-actions {
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  width: auto !important;
+  flex: none !important;
+}
+
+/* 2. Vertically Stacked Stage Header: Prevent title wrapping & squeeze-wrapping description */
+body:not(.regression-mode) .stage-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+  width: 100% !important;
+}
+
+body:not(.regression-mode) .stage-header h2 {
+  font-size: 26px !important;
+  margin: 2px 0 0 0 !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+}
+
+body:not(.regression-mode) .objective {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  color: var(--muted) !important;
+}
+
+/* 3. Balanced 2x2 Grid for Decision Strip: Avoid horizontal squashing */
+body:not(.regression-mode) .decision-strip {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+body:not(.regression-mode) .decision-chip {
+  min-height: 52px !important;
+  padding: 8px 12px !important;
+  border-radius: var(--radius-md) !important;
+}
+
+body:not(.regression-mode) .decision-chip span {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--muted) !important;
+}
+
+body:not(.regression-mode) .decision-chip strong {
+  font-size: 12px !important;
+  color: var(--ink) !important;
+  margin-top: 2px !important;
+}
+
+/* 4. Sleek Circular Unknown Tag-Dots: Avoid broken image look */
+body:not(.regression-mode) .tag-dot {
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50% !important;
+  border: 1.5px solid var(--line-strong) !important;
+  background: transparent !important;
+}
+
+body:not(.regression-mode) .tag-dot.unknown {
+  background: transparent !important;
+  border-color: var(--line-strong) !important;
+  opacity: 0.55 !important;
+  box-shadow: none !important;
+}
+
+body.theme-light .tag-dot.unknown {
+  border-color: rgba(160, 125, 90, 0.45) !important;
+}
+
+
 
 
 
