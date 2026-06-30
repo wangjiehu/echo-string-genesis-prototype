@@ -4,7 +4,7 @@
   "uxBuild": "1.0.0",
   "uxBuildName": "Public Playtest",
   "source": "Node VM regression suite with guided and low-guidance routes",
-  "generatedAt": "2026-06-30T10:20:00.288Z",
+  "generatedAt": "2026-06-30T15:30:32.673Z",
   "passed": true,
   "rollout": [
     {
@@ -197,7 +197,7 @@
   "domClickRegression": {
     "build": "1.0.0",
     "browser": "chrome.exe",
-    "url": "http://127.0.0.1:4174/index.html",
+    "url": "http://127.0.0.1:4175/index.html",
     "passed": true,
     "reports": {
       "guided": {
@@ -234,12 +234,12 @@
   "visualSmoke": {
     "build": "1.0.0",
     "browser": "chrome.exe",
-    "url": "http://127.0.0.1:4174/index.html",
+    "url": "http://127.0.0.1:4175/index.html",
     "passed": true,
     "scenarios": [
       {
         "name": "desktop-guided",
-        "url": "http://127.0.0.1:4174/index.html?mode=guided",
+        "url": "http://127.0.0.1:4175/index.html?mode=guided",
         "viewport": {
           "width": 1280,
           "height": 900,
@@ -268,7 +268,7 @@
       },
       {
         "name": "mobile-low",
-        "url": "http://127.0.0.1:4174/index.html?mode=low",
+        "url": "http://127.0.0.1:4175/index.html?mode=low",
         "viewport": {
           "width": 390,
           "height": 844,

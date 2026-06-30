@@ -1,12 +1,12 @@
 {
   "build": "1.0.0",
   "browser": "chrome.exe",
-  "url": "http://127.0.0.1:4174/index.html",
+  "url": "http://127.0.0.1:4175/index.html",
   "passed": true,
   "scenarios": [
     {
       "name": "desktop-guided",
-      "url": "http://127.0.0.1:4174/index.html?mode=guided",
+      "url": "http://127.0.0.1:4175/index.html?mode=guided",
       "viewport": {
         "width": 1280,
         "height": 900,
@@ -35,7 +35,7 @@
     },
     {
       "name": "mobile-low",
-      "url": "http://127.0.0.1:4174/index.html?mode=low",
+      "url": "http://127.0.0.1:4175/index.html?mode=low",
       "viewport": {
         "width": 390,
         "height": 844,
