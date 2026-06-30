@@ -4,7 +4,7 @@
   "uxBuild": "1.0.0",
   "uxBuildName": "Public Playtest",
   "source": "Node VM regression suite with guided and low-guidance routes",
-  "generatedAt": "2026-06-30T09:16:32.933Z",
+  "generatedAt": "2026-06-30T09:50:43.274Z",
   "passed": true,
   "rollout": [
     {

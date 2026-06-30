@@ -3447,8 +3447,8 @@ body:not(.regression-mode) .stage-panel {
   height: 100% !important;
   max-height: calc(100vh - 150px) !important;
   min-height: auto !important;
-  overflow: hidden !important;
-  padding: 20px !important;
+  overflow-y: auto !important; /* Enable vertical scrolling on the entire stage grid */
+  padding: 20px 20px 250px 20px !important; /* Bottom padding to clear fixed bottom-panel */
   margin: 0 !important;
   box-sizing: border-box !important;
 }
@@ -4099,6 +4099,22 @@ body:not(.regression-mode) .result-pulse small {
   margin: 2px 0 0 0 !important;
   opacity: 0.9 !important;
 }
+
+/* 7. Light Theme Session Action Buttons pop out styling */
+body.theme-light .session-actions .quiet-button {
+  background: #ffffff !important;
+  border: 1px solid rgba(139, 115, 85, 0.22) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04) !important;
+  color: var(--ink) !important;
+  font-weight: 600 !important;
+}
+
+body.theme-light .session-actions .quiet-button:hover {
+  background: #fcf9f2 !important;
+  border-color: rgba(139, 115, 85, 0.4) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+}
+
 
 
 
