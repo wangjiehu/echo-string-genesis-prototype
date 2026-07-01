@@ -1330,6 +1330,22 @@ body.theme-light .tag-dot.unknown {
   gap: 14px;
 }
 
+.playtest-review li {
+  margin-bottom: 9px;
+}
+
+.playtest-review li strong,
+.playtest-review li span {
+  display: block;
+}
+
+.playtest-review li span {
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
 .reaction-ledger,
 .ending-badge-list {
   display: grid;

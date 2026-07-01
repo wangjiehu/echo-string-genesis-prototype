@@ -50,6 +50,7 @@ $rows = foreach ($file in $files) {
     $lowFeedback = if ($null -ne $report.reports.low.feedbackEvents) { $report.reports.low.feedbackEvents } else { "-" }
     $guidedFailures = if ($null -ne $report.reports.guided.failureEvents) { $report.reports.guided.failureEvents } else { "-" }
     $lowFailures = if ($null -ne $report.reports.low.failureEvents) { $report.reports.low.failureEvents } else { "-" }
+    $lowPlaytestRisks = if ($report.reports.low.playtestRisks) { @($report.reports.low.playtestRisks).Count } else { 0 }
     [PSCustomObject]@{
       Name = $file.Name
       Completed = [bool]$report.passed
@@ -66,6 +67,7 @@ $rows = foreach ($file in $files) {
       Undo = "0/0"
       Feedback = "$guidedFeedback/$lowFeedback"
       Failures = "$guidedFailures/$lowFailures"
+      PlaytestRisks = [string]$lowPlaytestRisks
       LongestText = "-"
     }
     continue
@@ -74,6 +76,7 @@ $rows = foreach ($file in $files) {
     $undoUses = if ($null -ne $report.metrics.undoUses) { [int]$report.metrics.undoUses } else { 0 }
     $feedbackEvents = if ($report.metrics.feedbackEvents) { $report.metrics.feedbackEvents.Count } else { 0 }
     $failureEvents = if ($report.metrics.failureEvents) { $report.metrics.failureEvents.Count } else { 0 }
+    $playtestRisks = if ($report.playtest -and $report.playtest.risks) { @($report.playtest.risks).Count } else { 0 }
     [PSCustomObject]@{
       Name = $file.Name
       Completed = [bool]$report.completed
@@ -90,6 +93,7 @@ $rows = foreach ($file in $files) {
       Undo = [string]$undoUses
       Feedback = [string]$feedbackEvents
       Failures = [string]$failureEvents
+      PlaytestRisks = [string]$playtestRisks
       LongestText = "$($report.summary.longestZone.zone) / $(Format-Time ([int]$report.summary.longestZone.durationSec))"
     }
   }
@@ -101,11 +105,11 @@ Add-Line $lines ""
 Add-Line $lines "生成时间：$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
 Add-Line $lines "报告范围：``$ReportGlob``"
 Add-Line $lines ""
-Add-Line $lines "| 报告 | 完成 | 模式 | 当前区 | 总用时 | 扫描 | 剥离 | 注入 | 反应 | 误操作 | 撤销 | 反馈 | 失败 | 最长区 |"
-Add-Line $lines "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+Add-Line $lines "| 报告 | 完成 | 模式 | 当前区 | 总用时 | 扫描 | 剥离 | 注入 | 反应 | 误操作 | 撤销 | 反馈 | 失败 | 试玩风险 | 最长区 |"
+Add-Line $lines "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
 
 foreach ($row in $rows) {
-  Add-Line $lines "| $($row.Name) | $($row.Completed) | $($row.Mode) | $($row.Zone) | $($row.ElapsedText) | $($row.Scans) | $($row.Extracts) | $($row.Injects) | $($row.Reactions) | $($row.Mistakes) | $($row.Undo) | $($row.Feedback) | $($row.Failures) | $($row.LongestText) |"
+  Add-Line $lines "| $($row.Name) | $($row.Completed) | $($row.Mode) | $($row.Zone) | $($row.ElapsedText) | $($row.Scans) | $($row.Extracts) | $($row.Injects) | $($row.Reactions) | $($row.Mistakes) | $($row.Undo) | $($row.Feedback) | $($row.Failures) | $($row.PlaytestRisks) | $($row.LongestText) |"
 }
 
 $completedRows = @($rows | Where-Object { $_.Completed -and $_.IncludeInAverage })

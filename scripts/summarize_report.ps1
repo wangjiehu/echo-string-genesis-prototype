@@ -71,6 +71,25 @@ if ($report.reports -and $report.reports.guided -and $report.reports.low) {
   Add-Line $lines "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
   Add-Line $lines "| 引导 | $($report.reports.guided.completed) | $($report.reports.guided.scans) | $($report.reports.guided.extracts) | $($report.reports.guided.injects) | $($report.reports.guided.routeAssertions) | $($report.reports.guided.bossPhaseCounters) | $($report.reports.guided.reactions) | $($report.reports.guided.feedbackEvents) | $($report.reports.guided.failureEvents) | $($report.reports.guided.experienceStatus) |"
   Add-Line $lines "| 低引导 | $($report.reports.low.completed) | $($report.reports.low.scans) | $($report.reports.low.extracts) | $($report.reports.low.injects) | $($report.reports.low.routeAssertions) | $($report.reports.low.bossPhaseCounters) | $($report.reports.low.reactions) | $($report.reports.low.feedbackEvents) | $($report.reports.low.failureEvents) | $($report.reports.low.experienceStatus) |"
+  $lowPlaytestRisks = if ($report.reports.low.playtestRisks) { @($report.reports.low.playtestRisks) } else { @() }
+  $lowBossLabels = if ($report.reports.low.bossCounterLabels) { @($report.reports.low.bossCounterLabels) } else { @() }
+  if ($report.reports.low.playtestCheckCount -or $report.reports.low.playtestRisks) {
+    Add-Line $lines ""
+    Add-Line $lines "## 2.1 低引导真人试玩观察包"
+    Add-Line $lines ""
+    Add-Line $lines "| 项目 | 数值 |"
+    Add-Line $lines "| --- | --- |"
+    Add-Line $lines "| 理解追问 | $($report.reports.low.playtestCheckCount) |"
+    Add-Line $lines "| Z5停留 | $(Format-OptionalTime $report.reports.low.z5DurationSec) |"
+    Add-Line $lines "| Boss反制 | $($lowBossLabels -join ' / ') |"
+    Add-Line $lines "| 自动风险 | $($lowPlaytestRisks.Count) |"
+    if ($lowPlaytestRisks.Count -gt 0) {
+      Add-Line $lines ""
+      foreach ($item in $lowPlaytestRisks) {
+        Add-Line $lines "- $item"
+      }
+    }
+  }
   Add-Line $lines ""
   Add-Line $lines "## 3. 推进账本"
   Add-Line $lines ""
@@ -210,7 +229,29 @@ if ($report.experience) {
     Add-Line $lines "- 保持低引导真人复测。"
   }
   Add-Line $lines ""
-  Add-Line $lines "## 6. 最近事件"
+  if ($report.playtest) {
+    $playtestRisks = if ($report.playtest.risks) { @($report.playtest.risks) } else { @() }
+    $playtestChecks = if ($report.playtest.comprehensionChecks) { @($report.playtest.comprehensionChecks) } else { @() }
+    Add-Line $lines "## 6. 真人试玩观察包"
+    Add-Line $lines ""
+    Add-Line $lines "| 项目 | 数值 |"
+    Add-Line $lines "| --- | --- |"
+    Add-Line $lines "| 理解追问 | $($playtestChecks.Count) |"
+    Add-Line $lines "| Z5停留 | $(Format-Time ([int]$report.playtest.autoSignals.z5DurationSec)) |"
+    Add-Line $lines "| 自动风险 | $($playtestRisks.Count) |"
+    Add-Line $lines ""
+    if ($playtestRisks.Count -gt 0) {
+      foreach ($item in $playtestRisks) {
+        Add-Line $lines "- $item"
+      }
+    } else {
+      Add-Line $lines "- 暂无自动风险信号。"
+    }
+    Add-Line $lines ""
+    Add-Line $lines "## 7. 最近事件"
+  } else {
+    Add-Line $lines "## 6. 最近事件"
+  }
 } else {
   Add-Line $lines "## 5. 最近事件"
 }

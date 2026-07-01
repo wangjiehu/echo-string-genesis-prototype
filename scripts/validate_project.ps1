@@ -150,6 +150,11 @@ if ($appJs -match "experienceAudit" -and $appJs -match "failureEvents" -and $app
 } else {
   Add-Fail "experience audit or feedback metrics are missing"
 }
+if ($appJs -match "playtestPackage" -and $appJs -match "comprehensionChecks" -and $appJs -match "observerMarkdown") {
+  Add-Pass "playtest observer package is present"
+} else {
+  Add-Fail "playtest observer package is missing"
+}
 if ($appJs -match "Route tried to extract non-visible tag" -and $appJs -match "runPlayerPathAudit") {
   Add-Pass "visible extraction guard is present"
 } else {

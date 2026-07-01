@@ -911,6 +911,96 @@ function experienceAudit() {
   };
 }
 
+function playtestPackage() {
+  const summary = reportSummary();
+  const z5Duration = zoneDurationsSnapshot().find((item) => item.zone === "Z5")?.durationSec ?? 0;
+  const bossCounters = state.metrics.bossPhaseCounters.map((item) => ({
+    reaction: item.reaction,
+    label: reactionName(item.reaction),
+    t: item.t,
+    zone: item.zone
+  }));
+  const risks = [];
+  if (state.testMode !== "low") risks.push("当前不是低引导模式，真人理解质量只能作为参考。");
+  if (summary.longestZone?.durationSec >= 90) risks.push(`${summary.longestZone.zone} 停留超过90秒，需记录卡点假设。`);
+  if (z5Duration >= 90) risks.push("Z5 碎桥力场停留较久，重点确认玩家是否把机关动作误解为普通取词。");
+  if (state.metrics.failureEvents.length) risks.push("本轮出现失败事件，需对照失败账本询问玩家当时的预期。");
+  if (isCompleted() && bossCounters.length < 3) risks.push("Boss通关但护文反制不足，需确认是否绕过语义考核。");
+  return {
+    purpose: "验证玩家是否真正理解扫描、取词、写词、组合反应，而不是照着提示完成。",
+    privacy: "只记录匿名编号、设备和观察结果；不要记录姓名、账号、联系方式或其他身份信息。",
+    entry: "线上入口可使用 ?mode=low；本地入口可使用 /index.html?mode=low。",
+    observerRules: [
+      "不提前解释正确路线。",
+      "只回答界面操作问题，不解释谜题答案。",
+      "卡住超过90秒时先记录卡点，再允许读出当前结果反馈条。",
+      "单人偏好先记录，不立即改规则；多人同类误解再改提示或交互。"
+    ],
+    comprehensionChecks: [
+      { id: "first-intent", prompt: "第一次点击前，请玩家说出“我现在准备做什么”。", pass: "能指出要选择对象并扫描，或能合理说明正在观察对象。" },
+      { id: "scan-difference", prompt: "完成Z1后询问：扫描前后你知道的信息有什么不同？", pass: "能说出扫描揭示词缀、槽位或取写成本。" },
+      { id: "z5-mechanic", prompt: "完成Z5后询问：力场柱是在提供词，还是在驱动碎片？", pass: "能说出本段主要是用吸引/排斥机关移动碎片，不是反复剥离力场词。" },
+      { id: "boss-layer-1", prompt: "Boss第一层为什么用蒸汽？", pass: "能把过热与潮湿组合成护文过载或蒸汽爆发。" },
+      { id: "boss-layer-2", prompt: "Boss第二层为什么先冻结再打裂？", pass: "能说出冻结显出裂隙，脆弱/重击扩大破绽。" },
+      { id: "boss-layer-3", prompt: "Boss第三层为什么用相反力场？", pass: "能说出吸引和排斥在守卫身上相撞造成力场震荡。" },
+      { id: "world-examples", prompt: "通关后请玩家说出两个“词改变世界状态”的例子。", pass: "能举出门变脆、石头变轻/沉重、融冰、蒸汽、力场碎片或Boss护文等例子。" }
+    ],
+    triggerRules: [
+      "主线软锁或真实点击不可达：出现1次即修。",
+      "同一区同类误解达到3名玩家：修提示、对象命名或信息层级。",
+      "Boss只能背配方不能解释原因：修阶段揭示，不先加新招式。",
+      "Z5多人误取力场柱：继续强化机关动作表达，不增加碎片数量。"
+    ],
+    autoSignals: {
+      sessionId: state.sessionId,
+      mode: state.testMode,
+      completed: isCompleted(),
+      totalMistakes: summary.totalMistakes,
+      longestZone: summary.longestZone,
+      z5DurationSec: z5Duration,
+      firstScanSec: state.metrics.firstScanSec,
+      firstExtractSec: state.metrics.firstExtractSec,
+      firstInjectSec: state.metrics.firstInjectSec,
+      bossCounters,
+      failureLedger: failureLedger()
+    },
+    observerMarkdown: playtestObserverMarkdown(summary, z5Duration, bossCounters, risks),
+    risks
+  };
+}
+
+function playtestObserverMarkdown(summary, z5Duration, bossCounters, risks) {
+  const longest = summary.longestZone ? `${summary.longestZone.zone} / ${formatTime(summary.longestZone.durationSec)}` : "-";
+  const bossText = bossCounters.length ? bossCounters.map((item) => item.label).join(" / ") : "-";
+  const riskText = risks.length ? risks.map((item) => `- ${item}`).join("\n") : "- 暂无自动风险信号。";
+  return [
+    `# 低引导试玩观察记录 ${state.sessionId}`,
+    "",
+    `- 模式：${currentModeLabel()}`,
+    `- 完成：${isCompleted() ? "是" : "否"}`,
+    `- 总误操作：${summary.totalMistakes}`,
+    `- 最长区域：${longest}`,
+    `- Z5停留：${formatTime(z5Duration)}`,
+    `- Boss反制：${bossText}`,
+    `- 首扫/首取/首写：${timeOrDash(state.metrics.firstScanSec)} / ${timeOrDash(state.metrics.firstExtractSec)} / ${timeOrDash(state.metrics.firstInjectSec)}`,
+    "",
+    "## 观察者追问",
+    "- 第一次点击前：你现在准备做什么？",
+    "- Z1后：扫描前后你知道的信息有什么不同？",
+    "- Z5后：力场柱是在提供词，还是在驱动碎片？",
+    "- Boss后：三层护文分别为什么这样反制？",
+    "- 通关后：说出两个词改变世界状态的例子。",
+    "",
+    "## 自动风险信号",
+    riskText,
+    "",
+    "## 观察备注",
+    "- 玩家复述：",
+    "- 卡点原因：",
+    "- 是否需要改规则/提示："
+  ].join("\n");
+}
+
 function currentAudit() {
   const mistakes = state.metrics.warnings + state.metrics.blockedActions;
   const reactionTypes = Object.values(state.metrics.reactionCounts).filter((count) => count > 0).length;
@@ -1670,8 +1760,8 @@ function canFormBridge() {
 
 function z5MechanicHint(obj = selectedObject()) {
   if (zone().id !== "Z5" || !obj?.scanned) return "";
-  if (obj.id === "pullPillar" && !state.flags.debrisGathered) return "本段先点击“聚拢碎片”，不需要剥离力场词。";
-  if (obj.id === "pushPillar" && state.flags.debrisGathered && !state.flags.bridgeFormed) return "本段先点击“形成桥面”，不需要剥离力场词。";
+  if (obj.id === "pullPillar" && !state.flags.debrisGathered) return "这是碎桥机关的吸引端：先用“聚拢碎片”驱动桥面，不需要把力场词当普通词源剥离。";
+  if (obj.id === "pushPillar" && state.flags.debrisGathered && !state.flags.bridgeFormed) return "这是碎桥机关的排斥端：先用“形成桥面”把碎片推入锚点，不需要把力场词当普通词源剥离。";
   return "";
 }
 
@@ -2023,6 +2113,10 @@ function previewForSelectedObject() {
 
   const inventoryTag = state.inventory[state.selectedInventoryIndex];
   if (inventoryTag) return injectionPreview(obj, inventoryTag);
+  const mechanicHint = z5MechanicHint(obj);
+  if (mechanicHint && !state.selectedTagId) {
+    return { tone: "warn", title: "机关解读", lines: [mechanicHint, "观察碎片是否向桥中央或锚点移动，再决定下一步。"] };
+  }
 
   if (state.selectedTagId) {
     const def = tag(state.selectedTagId);
@@ -2618,6 +2712,13 @@ function renderCompletionPanel() {
   const failureRows = report.experience.failureLedger.length
     ? report.experience.failureLedger.map((item) => `<span>${item.label}<strong>${item.count}</strong></span>`).join("")
     : "<span>无阻塞<strong>0</strong></span>";
+  const playtestPrompts = report.playtest.comprehensionChecks
+    .slice(0, 5)
+    .map((item) => `<li><strong>${item.prompt}</strong><span>${item.pass}</span></li>`)
+    .join("");
+  const playtestRisks = report.playtest.risks.length
+    ? report.playtest.risks.map((item) => `<li>${item}</li>`).join("")
+    : "<li>暂无自动风险信号，仍需真人复述确认理解质量。</li>";
   const auditRisks = report.audit.risks.length
     ? report.audit.risks.map((item) => `<li>${item}</li>`).join("")
     : "<li>未发现明显阻塞。</li>";
@@ -2689,6 +2790,16 @@ function renderCompletionPanel() {
         <div class="reaction-ledger">${failureRows}</div>
       </div>
     </div>
+    <div class="completion-audit playtest-review">
+      <div>
+        <p class="label">真人试玩追问</p>
+        <ul>${playtestPrompts}</ul>
+      </div>
+      <div>
+        <p class="label">自动风险信号</p>
+        <ul>${playtestRisks}</ul>
+      </div>
+    </div>
     
     <div class="pitch-container">
       <h4>关注《语弦生态：创世纪》主线开发 / Add to Wishlist</h4>
@@ -2733,7 +2844,7 @@ function buildReport() {
   const completed = isCompleted();
   const summary = reportSummary();
   const zoneDurations = zoneDurationsSnapshot();
-  return {
+  const report = {
     project: "Echo-String: Genesis",
     prototype: "Duanju Courtyard",
     uxBuild: BUILD_LABEL,
@@ -2761,6 +2872,8 @@ function buildReport() {
     currentSteps: zoneSteps(),
     latestLog: state.log.map((item) => item.message)
   };
+  report.playtest = playtestPackage();
+  return report;
 }
 
 function downloadReport() {
@@ -2774,7 +2887,7 @@ function downloadReport() {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-  log("试玩报告已生成。", "good");
+  log("试玩报告已生成，JSON 内含 playtest 观察包。", "good");
   render();
 }
 

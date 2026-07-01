@@ -34,6 +34,8 @@ http://127.0.0.1:4174/index.html?mode=low
 
 建议直接使用[低引导真人试玩记录模板](./low_guidance_playtest_record_template.md)记录。
 
+页面内“报告”按钮会导出 JSON。导出的 `playtest` 字段包含观察者规则、关键追问、自动风险信号和 `observerMarkdown`，可直接粘贴进记录模板；不要把 JSON 里的会话编号当作玩家身份信息。
+
 | 字段 | 记录方式 |
 | --- | --- |
 | 玩家编号 | P01、P02等匿名编号 |
@@ -43,6 +45,8 @@ http://127.0.0.1:4174/index.html?mode=low
 | 每区用时 | 报告JSON或观察者记录 |
 | 误操作 | 按事件日志和失败账本分类 |
 | 检查点恢复 | 完成面板或报告JSON |
+| 自动风险信号 | 报告JSON的 `playtest.risks` |
+| 观察者追问 | 报告JSON的 `playtest.comprehensionChecks` |
 | Boss三层复述 | 玩家用自己的话解释三层反制 |
 | Z5理解 | 玩家说明自己是在激发力场还是取词改写 |
 | 首屏理解 | 玩家第一次点击前说出“我现在要做什么” |

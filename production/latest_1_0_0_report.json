@@ -4,7 +4,7 @@
   "uxBuild": "1.0.0",
   "uxBuildName": "Public Playtest",
   "source": "Node VM regression suite with guided and low-guidance routes",
-  "generatedAt": "2026-06-30T15:30:32.673Z",
+  "generatedAt": "2026-07-01T01:03:23.799Z",
   "passed": true,
   "rollout": [
     {
@@ -197,7 +197,7 @@
   "domClickRegression": {
     "build": "1.0.0",
     "browser": "chrome.exe",
-    "url": "http://127.0.0.1:4175/index.html",
+    "url": "http://127.0.0.1:4177/index.html",
     "passed": true,
     "reports": {
       "guided": {
@@ -234,12 +234,12 @@
   "visualSmoke": {
     "build": "1.0.0",
     "browser": "chrome.exe",
-    "url": "http://127.0.0.1:4175/index.html",
+    "url": "http://127.0.0.1:4177/index.html",
     "passed": true,
     "scenarios": [
       {
         "name": "desktop-guided",
-        "url": "http://127.0.0.1:4175/index.html?mode=guided",
+        "url": "http://127.0.0.1:4177/index.html?mode=guided",
         "viewport": {
           "width": 1280,
           "height": 900,
@@ -268,7 +268,7 @@
       },
       {
         "name": "mobile-low",
-        "url": "http://127.0.0.1:4175/index.html?mode=low",
+        "url": "http://127.0.0.1:4177/index.html?mode=low",
         "viewport": {
           "width": 390,
           "height": 844,
@@ -308,7 +308,8 @@
     "玩家反馈事件与体验审计",
     "真实可见路径审计",
     "真实DOM点击回归",
-    "桌面/手机视觉Smoke"
+    "桌面/手机视觉Smoke",
+    "低引导真人试玩观察包"
   ],
   "reports": {
     "guided": {
@@ -336,6 +337,16 @@
         "操作反馈事件充足，可复盘关键路径。"
       ],
       "experienceFrictions": [],
+      "playtestRisks": [
+        "当前不是低引导模式，真人理解质量只能作为参考。"
+      ],
+      "playtestCheckCount": 7,
+      "z5DurationSec": 0,
+      "bossCounterLabels": [
+        "蒸汽爆发",
+        "破裂窗口",
+        "力场震荡"
+      ],
       "failureLedger": []
     },
     "low": {
@@ -363,6 +374,14 @@
         "操作反馈事件充足，可复盘关键路径。"
       ],
       "experienceFrictions": [],
+      "playtestRisks": [],
+      "playtestCheckCount": 7,
+      "z5DurationSec": 0,
+      "bossCounterLabels": [
+        "蒸汽爆发",
+        "破裂窗口",
+        "力场震荡"
+      ],
       "failureLedger": []
     }
   },
