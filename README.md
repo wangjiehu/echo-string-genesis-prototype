@@ -3,7 +3,7 @@
 《语弦生态：创世纪》的可玩网页原型。1.0.0 版本聚焦“断句庭院”垂直切片：玩家通过扫描对象、剥离词缀、注入语义槽位和触发组合反应，验证这套语义改写玩法是否足够清楚、可玩、可继续扩展。
 
 [在线试玩](https://wangjiehu.github.io/echo-string-genesis-prototype/)
-[GitHub 仓库](https://github.com/wangjiehu/echo-string-genesis-prototype)
+[GitHub 仓库](https://github.com/Lunora-Gather/echo-string-genesis-prototype)
 
 ## 1.0.0 状态
 

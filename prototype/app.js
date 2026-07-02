@@ -2804,7 +2804,7 @@ function renderCompletionPanel() {
     <div class="pitch-container">
       <h4>关注《语弦生态：创世纪》主线开发 / Add to Wishlist</h4>
       <p>完整版将包含 5 大文明语系变迁、主谓宾句法因果闭环、实时流体物理模拟及更宏大的叙事修正冒险！</p>
-      <button class="wishlist-btn" onclick="window.open('https://github.com/wangjiehu/echo-string-genesis-prototype', '_blank')">🚀 关注项目开源库 / Wishlist</button>
+      <button class="wishlist-btn" onclick="window.open('https://github.com/Lunora-Gather/echo-string-genesis-prototype', '_blank')">🚀 关注项目开源库 / Wishlist</button>
     </div>
 
     <table class="zone-summary-table">
